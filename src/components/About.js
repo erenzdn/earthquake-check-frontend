@@ -1,149 +1,232 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { 
+  LuSparkles, 
+  LuBuilding2, 
+  LuGlobe, 
+  LuCode, 
+  LuCpu, 
+  LuShieldCheck, 
+  LuArrowUpRight, 
+  LuDatabase, 
+  LuLayers 
+} from 'react-icons/lu';
 
 function About() {
-  return (
-    <div className="page-container">
-      <div className="page-header">
-        <h1 className="page-title">Hakkımızda</h1>
-        <p className="page-subtitle">EarthquakeCheck'in hikayesi ve misyonu</p>
-      </div>
+  // Animasyon varyasyonları
+  const fadeInUp = {
+    hidden: { opacity: 0, y: 30 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] }
+    }
+  };
 
-      <div className="content-section">
-        <motion.div
-          className="about-intro"
+  const staggerContainer = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.15
+      }
+    }
+  };
+
+  return (
+    <div className="page-container about-page">
+      {/* 1. Kahraman Alanı (Hero Section) */}
+      <div className="page-header about-page-header">
+        <motion.div 
+          className="about-eyebrow"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <LuSparkles className="eyebrow-icon" />
+          <span>Farkındalık & Teknoloji</span>
+        </motion.div>
+        <motion.h1 
+          className="page-title"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
         >
-          <p className="intro-text">
-            EarthquakeCheck, Türkiye'deki binaların deprem güvenliğini değerlendirmek ve toplumu bilinçlendirmek amacıyla kurulmuş bir sosyal girişimdir. Amacımız, herkesin yaşadığı binanın deprem riskini kolayca anlayabileceği bir platform sunmaktır.
-          </p>
-        </motion.div>
-
-        <div className="about-content">
-          <motion.div
-            className="about-card"
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-          >
-            <div className="about-icon">🔍</div>
-            <h2>Misyonumuz</h2>
-            <p>
-              Türkiye'deki her bireyin, yaşadığı binanın deprem güvenliğini anlayabilmesini ve gerekli önlemleri alabilmesini sağlamak. Deprem bilincini artırarak, toplum olarak daha güvenli yaşam alanları oluşturmaya katkıda bulunmak.
-            </p>
-          </motion.div>
-
-          <motion.div
-            className="about-card"
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-          >
-            <div className="about-icon">🌟</div>
-            <h2>Vizyonumuz</h2>
-            <p>
-              Deprem risk analizini herkes için erişilebilir kılarak, can ve mal kayıplarını en aza indirmeye yardımcı olmak. Teknoloji ve bilimi bir araya getirerek, depreme dayanıklı bir Türkiye inşa etme çabalarına öncülük etmek.
-            </p>
-          </motion.div>
-        </div>
+          Deprem Güvenliğinde <br />
+          <span className="text-gradient-primary">Dijital Dönüşüm</span>
+        </motion.h1>
+        <motion.p 
+          className="page-subtitle"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+        >
+          Deprem risk analizini herkes için anlaşılır, hızlı ve tamamen güvenli hale getiren bilimsel altyapı.
+        </motion.p>
       </div>
 
-      <motion.div
-        className="content-section team-section"
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.4 }}
+      {/* 2. Kurucu Bölümü (Founder Section) */}
+      <motion.div 
+        className="content-section founder-section"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={fadeInUp}
       >
-        <h2 className="section-title">Ekibimiz</h2>
-        <div className="team-container">
-          <div className="team-member">
-            <div className="member-photo">
-              <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=200&auto=format&fit=crop" alt="Ayşe Yılmaz" />
+        <div className="founder-profile-card">
+          <div className="founder-info-container">
+            <div className="founder-icon-anchor">
+              <LuCode className="anchor-icon" />
             </div>
-            <h3 className="member-name">Ayşe Yılmaz</h3>
-            <p className="member-title">Kurucu & İnşaat Mühendisi</p>
-            <p className="member-bio">
-              15 yıllık yapı güvenliği deneyimiyle, EarthquakeCheck'in teknik altyapısını ve risk değerlendirme metodolojisini geliştirdi.
-            </p>
-          </div>
+            
+            <div className="info-eyebrow">PROJENİN ARKASINDAKİ İSİM</div>
+            <h2 className="founder-name">Mehmet Eren Özden</h2>
+            <div className="founder-title">Kıdemli Yazılım Mühendisi & Sistem Mimarı</div>
+            
+            <div className="founder-bio-content">
+              <p className="founder-bio">
+                EarthquakeCheck platformunun kurucusu ve baş sistem mimarı olan <strong>Mehmet Eren Özden</strong>, coğrafi bilgi sistemleri (CBS), yüksek ölçeklenebilir bulut altyapıları ve modern web teknolojileri alanında uzmanlaşmış bir bilgisayar mühendisidir. Yazılım mühendisliği ve dijital ürün tasarımı disiplinlerini bir araya getirerek, karmaşık yapısal risk analizi modellerini son kullanıcılar için sade, anlaşılır ve bilimsel raporlara dönüştüren teknik altyapıyı tasarlamış ve hayata geçirmiştir.
+              </p>
+              
+              <p className="founder-bio-secondary">
+                Toplum yararına odaklanan bu sosyal girişim kapsamında; AFAD sismik veri entegrasyonları, koordinat tabanlı zemin sınıfı analiz algoritmaları ve Türkiye Bina Deprem Yönetmeliği (TBDY) mühendislik parametrelerinin dijitalleştirilmesi süreçlerini yönetmektedir. Geliştirme süreçlerini uçtan uca veri güvenliği, yüksek performans ve kullanıcı gizliliği standartlarına bağlı kalarak yürüten Özden, dijital çözümlerle toplumsal deprem bilincinin artırılmasına öncülük etmektedir.
+              </p>
+            </div>
 
-          <div className="team-member">
-            <div className="member-photo">
-              <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200&auto=format&fit=crop" alt="Mehmet Kaya" />
+            <div className="founder-actions">
+              <motion.a 
+                href="https://mehmeterenozden.com" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="founder-website-btn"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <span>mehmeterenozden.com</span>
+                <LuArrowUpRight className="btn-arrow" />
+              </motion.a>
             </div>
-            <h3 className="member-name">Mehmet Kaya</h3>
-            <p className="member-title">Veri Bilimci</p>
-            <p className="member-bio">
-              Risk analizi algoritmalarımızı geliştiren ve deprem verilerini modelleyen yapay zeka uzmanı.
-            </p>
-          </div>
-
-          <div className="team-member">
-            <div className="member-photo">
-              <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=200&auto=format&fit=crop" alt="Zeynep Demir" />
-            </div>
-            <h3 className="member-name">Zeynep Demir</h3>
-            <p className="member-title">Yazılım Geliştirme Lideri</p>
-            <p className="member-bio">
-              Kullanıcı dostu arayüzümüzü tasarlayan ve platformun teknik altyapısını yöneten deneyimli yazılım mühendisi.
-            </p>
           </div>
         </div>
       </motion.div>
 
-      <motion.div
-        className="content-section"
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.6 }}
+      {/* 3. Platform Değerleri (Platform Core Values) */}
+      <div className="content-section values-section">
+        <motion.div 
+          className="section-header-centered"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+        >
+          <div className="info-eyebrow">ÇALIŞMA İLKELERİMİZ</div>
+          <h2 className="section-title">Platformumuzun Temel Sütunları</h2>
+        </motion.div>
+
+        <motion.div 
+          className="values-grid"
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+        >
+          <motion.div className="value-card" variants={fadeInUp} whileHover="hover" custom={0}>
+            <div className="value-icon-wrapper">
+              <LuCpu className="value-icon" />
+            </div>
+            <h3>Bilimsel Analiz</h3>
+            <p>
+              AFAD zemin verileri, yerel deprem yönetmelikleri ve yapı mühendisliği parametrelerini temel alan gelişmiş algoritmalarla çalışıyoruz.
+            </p>
+          </motion.div>
+
+          <motion.div className="value-card" variants={fadeInUp} whileHover="hover" custom={1}>
+            <div className="value-icon-wrapper">
+              <LuGlobe className="value-icon" />
+            </div>
+            <h3>Herkes İçin Erişim</h3>
+            <p>
+              Karmaşık teknik raporları, herkesin saniyeler içinde kolayca anlayabileceği, sadeleştirilmiş ve görselleştirilmiş grafiklere dönüştürüyoruz.
+            </p>
+          </motion.div>
+
+          <motion.div className="value-card" variants={fadeInUp} whileHover="hover" custom={2}>
+            <div className="value-icon-wrapper">
+              <LuShieldCheck className="value-icon" />
+            </div>
+            <h3>Uçtan Uca Gizlilik</h3>
+            <p>
+              Gizliliğinize önem veriyoruz. Analiz ettiğiniz bina veya adres bilgileri veritabanımıza asla kaydedilmez ve tamamen anonim kalır.
+            </p>
+          </motion.div>
+        </motion.div>
+      </div>
+
+      {/* 4. Teknoloji Katmanı (Technology Architecture) */}
+      <motion.div 
+        className="content-section tech-section"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={fadeInUp}
       >
-        <h2 className="section-title">Teknolojimiz</h2>
-        <div className="technology-container">
-          <div className="tech-card">
-            <h3>Veri Kaynakları</h3>
-            <ul>
-              <li>AFAD deprem kayıtları ve risk haritaları</li>
-              <li>Yapı denetim arşivleri ve bina envanterleri</li>
-              <li>Zemin etüt raporları</li>
-              <li>Uydu görüntüleri ve haritalama verileri</li>
-            </ul>
+        <div className="tech-inner-card">
+          <div className="tech-header">
+            <div className="info-eyebrow">MÜHENDİSLİK VE ALTYAPI</div>
+            <h2 className="section-title">Teknolojik Mimarimiz</h2>
+            <p className="tech-subtitle">
+              Saniyeler içinde hassas analizler sunabilmek için en modern yazılım ve veri işleme teknolojilerini kullanıyoruz.
+            </p>
           </div>
-          <div className="tech-card">
-            <h3>Analiz Yöntemleri</h3>
-            <ul>
-              <li>Makine öğrenmesi algoritmaları</li>
-              <li>İstatistiksel analiz modelleri</li>
-              <li>Yapısal mühendislik simülasyonları</li>
-              <li>Coğrafi bilgi sistemleri (CBS)</li>
-            </ul>
+
+          <div className="tech-grid">
+            <div className="tech-item-card">
+              <div className="tech-icon-title">
+                <LuLayers className="tech-card-icon" />
+                <h3>Modern Frontend</h3>
+              </div>
+              <p>React ve TailwindCSS tabanlı esnek arayüz, Framer Motion ve GSAP entegrasyonlarıyla pürüzsüz animasyonlar ve üst düzey kullanıcı deneyimi sunar.</p>
+            </div>
+
+            <div className="tech-item-card">
+              <div className="tech-icon-title">
+                <LuDatabase className="tech-card-icon" />
+                <h3>Coğrafi Veri İşleme</h3>
+              </div>
+              <p>Koordinat tabanlı yerel zemin sınıfı tespiti, en yakın fay hatları mesafesi ve bölgesel ivme katsayılarının milisaniyeler düzeyinde hesaplanması.</p>
+            </div>
+
+            <div className="tech-item-card">
+              <div className="tech-icon-title">
+                <LuBuilding2 className="tech-card-icon" />
+                <h3>Deprem Mühendisliği</h3>
+              </div>
+              <p>Türkiye Bina Deprem Yönetmeliği (TBDY) esasları doğrultusunda, binaların yaş, kat sayısı ve taşıyıcı sistem analiz formülleriyle modelleme.</p>
+            </div>
           </div>
         </div>
       </motion.div>
 
-      <motion.div
-        className="content-section"
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.8 }}
+      {/* 5. İşbirlikler (Partners) */}
+      <motion.div 
+        className="content-section partners-section"
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        variants={fadeInUp}
       >
-        <h2 className="section-title">İşbirliklerimiz</h2>
-        <p className="partners-intro">
-          EarthquakeCheck olarak, aşağıdaki kurum ve kuruluşlarla işbirliği içinde çalışmaktayız:
-        </p>
-        <div className="partners-list">
-          <div className="partner">
-            <p>🏢 İstanbul Teknik Üniversitesi</p>
-          </div>
-          <div className="partner">
-            <p>🏢 AFAD (Afet ve Acil Durum Yönetimi Başkanlığı)</p>
-          </div>
-          <div className="partner">
-            <p>🏢 TÜBİTAK</p>
-          </div>
-          <div className="partner">
-            <p>🏢 Türkiye Belediyeler Birliği</p>
+        <div className="partners-banner">
+          <span className="partners-title">GÜVENİLİR VERİ KAYNAKLARI & ALTYAPI DESTEKÇİLERİ</span>
+          <div className="partners-logos">
+            <div className="partner-logo-item">
+              <LuBuilding2 className="partner-logo-icon" />
+              <span>AFAD Veri Sağlayıcı</span>
+            </div>
+            <div className="partner-divider"></div>
+            <div className="partner-logo-item">
+              <LuSparkles className="partner-logo-icon" />
+              <span>TÜBİTAK Akademik Katkı</span>
+            </div>
           </div>
         </div>
       </motion.div>
@@ -151,4 +234,4 @@ function About() {
   );
 }
 
-export default About; 
+export default About;
