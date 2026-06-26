@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { LuPhone, LuMail, LuMapPin, LuLinkedin, LuGithub, LuGlobe } from 'react-icons/lu';
+import { submitContactMessage } from '../Api';
 
 function Contact() {
   const [formData, setFormData] = useState({
@@ -12,6 +13,8 @@ function Contact() {
   
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [fieldErrors, setFieldErrors] = useState({});
   
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -19,15 +22,74 @@ function Contact() {
       ...prevData,
       [name]: value
     }));
+    // Clear field error when user starts typing
+    if (fieldErrors[name]) {
+      setFieldErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
+    }
+  };
+
+  const validateForm = () => {
+    const errors = {};
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    const trimmedName = formData.name.trim();
+    if (!trimmedName) {
+      errors.name = 'Ad Soyad alanı zorunludur.';
+    } else if (trimmedName.length > 120) {
+      errors.name = 'Ad Soyad en fazla 120 karakter olabilir.';
+    }
+
+    const trimmedEmail = formData.email.trim();
+    if (!trimmedEmail) {
+      errors.email = 'E-posta alanı zorunludur.';
+    } else if (trimmedEmail.length > 255) {
+      errors.email = 'E-posta en fazla 255 karakter olabilir.';
+    } else if (!emailRegex.test(trimmedEmail)) {
+      errors.email = 'Geçerli bir e-posta adresi giriniz.';
+    }
+
+    const trimmedSubject = formData.subject.trim();
+    if (!trimmedSubject) {
+      errors.subject = 'Konu alanı zorunludur.';
+    } else if (trimmedSubject.length > 150) {
+      errors.subject = 'Konu en fazla 150 karakter olabilir.';
+    }
+
+    const trimmedMessage = formData.message.trim();
+    if (!trimmedMessage) {
+      errors.message = 'Mesaj alanı zorunludur.';
+    } else if (trimmedMessage.length < 10) {
+      errors.message = 'Mesaj en az 10 karakter olmalıdır.';
+    } else if (trimmedMessage.length > 4000) {
+      errors.message = 'Mesaj en fazla 4000 karakter olabilir.';
+    }
+
+    setFieldErrors(errors);
+    return Object.keys(errors).length === 0;
   };
   
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setSubmitStatus(null);
+    setErrorMessage('');
+    
+    if (!validateForm()) {
+      return;
+    }
+
     setIsSubmitting(true);
     
-    // API entegrasyonu yerine gerçek bir gönderim yapmadığımız için
-    // başarılı bir gönderim simüle ediyoruz
-    setTimeout(() => {
+    try {
+      await submitContactMessage({
+        fullName: formData.name.trim(),
+        email: formData.email.trim(),
+        subject: formData.subject.trim(),
+        message: formData.message.trim()
+      });
+
       setIsSubmitting(false);
       setSubmitStatus('success');
       setFormData({
@@ -41,7 +103,11 @@ function Contact() {
       setTimeout(() => {
         setSubmitStatus(null);
       }, 5000);
-    }, 1500);
+    } catch (error) {
+      setIsSubmitting(false);
+      setSubmitStatus('error');
+      setErrorMessage(error.message || 'Mesaj gönderilirken bir hata oluştu.');
+    }
   };
   
   return (
@@ -144,6 +210,12 @@ function Contact() {
               Mesajınız başarıyla gönderildi! En kısa sürede size dönüş yapacağız.
             </div>
           )}
+
+          {submitStatus === 'error' && (
+            <div className="error-message">
+              {errorMessage}
+            </div>
+          )}
           
           <form className="contact-form" onSubmit={handleSubmit}>
             <div className="form-group">
@@ -155,8 +227,10 @@ function Contact() {
                 value={formData.name}
                 onChange={handleChange}
                 required
+                maxLength={120}
                 placeholder="Adınız ve soyadınız"
               />
+              {fieldErrors.name && <div className="form-error text-red-500 text-xs mt-1">{fieldErrors.name}</div>}
             </div>
             
             <div className="form-group">
@@ -168,8 +242,10 @@ function Contact() {
                 value={formData.email}
                 onChange={handleChange}
                 required
+                maxLength={255}
                 placeholder="E-posta adresiniz"
               />
+              {fieldErrors.email && <div className="form-error text-red-500 text-xs mt-1">{fieldErrors.email}</div>}
             </div>
             
             <div className="form-group">
@@ -181,8 +257,10 @@ function Contact() {
                 value={formData.subject}
                 onChange={handleChange}
                 required
+                maxLength={150}
                 placeholder="Mesaj konunuz"
               />
+              {fieldErrors.subject && <div className="form-error text-red-500 text-xs mt-1">{fieldErrors.subject}</div>}
             </div>
             
             <div className="form-group">
@@ -193,9 +271,12 @@ function Contact() {
                 value={formData.message}
                 onChange={handleChange}
                 required
+                minLength={10}
+                maxLength={4000}
                 placeholder="Mesajınızı buraya yazın..."
                 rows="5"
               ></textarea>
+              {fieldErrors.message && <div className="form-error text-red-500 text-xs mt-1">{fieldErrors.message}</div>}
             </div>
             
             <button 

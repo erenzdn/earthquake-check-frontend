@@ -174,7 +174,9 @@ function AddressForm() {
       latitude: normalizeOptionalNumber(mapCoordinates?.lat),
       longitude: normalizeOptionalNumber(mapCoordinates?.lng)
     };
-    console.debug("[AddressForm] normalized submit payload:", normalizedPayload);
+    if (process.env.NODE_ENV !== "production") {
+      console.debug("[AddressForm] normalized submit payload:", normalizedPayload);
+    }
 
     // 1. Start the API call in the background
     let apiPromise = fetchEvaluation(normalizedPayload);
@@ -242,15 +244,21 @@ function AddressForm() {
 
       // If API succeeded, transition to Step 3 (Results)
       if (apiResult) {
+        const whitelist = ['A','B','C','D','E','F'];
+        if (!apiResult.safetyGrade || !whitelist.includes(apiResult.safetyGrade)) {
+          throw new Error("Sunucudan geçersiz güvenlik derecesi alındı.");
+        }
         setEvaluationResult(apiResult);
         setApiFeedback({ type: "success", message: "Değerlendirme başarıyla tamamlandı." });
         setIsAnalyzing(false);
         setFormStep(3);
       }
     } catch (err) {
-      console.error("[AddressForm] submit error:", err);
-      console.error("[AddressForm] error response body:", err?.responseBody);
-      console.error("[AddressForm] error details:", err?.details);
+      if (process.env.NODE_ENV !== "production") {
+        console.error("[AddressForm] submit error:", err);
+        console.error("[AddressForm] error response body:", err?.responseBody);
+        console.error("[AddressForm] error details:", err?.details);
+      }
       setFieldErrors(toUserFriendlyFieldErrors(err?.details || {}));
       setGeneralError(getGeneralErrorMessage(err));
       setIsAnalyzing(false); // Go back to form if error occurs
@@ -264,6 +272,15 @@ function AddressForm() {
     setGeneralError("");
     setApiFeedback(null);
     setFieldErrors({});
+
+    const hasAddress = address && address.trim().length > 0;
+    const hasCoordinates = mapCoordinates && mapCoordinates.lat !== null && mapCoordinates.lng !== null;
+
+    if (!hasAddress && !hasCoordinates) {
+      setGeneralError("Adım 2'ye geçmek için en az bir adres girmeli veya haritadan konum seçmelisiniz.");
+      return;
+    }
+
     setFormStep(2);
   };
 
@@ -402,6 +419,7 @@ function AddressForm() {
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
                   placeholder="Tam adresinizi giriniz"
+                  maxLength={500}
                   variants={inputVariants}
                   whileFocus="focus"
                   initial="blur"

@@ -30,6 +30,7 @@ import Navbar from "./components/Navbar";
 import HowItWorks from "./components/HowItWorks";
 import About from "./components/About";
 import Contact from "./components/Contact";
+import AdminMessages from "./components/AdminMessages";
 import PageTransition from "./components/PageTransition";
 
 // Ana Sayfa Componenti
@@ -660,6 +661,7 @@ function App() {
               <Route path="/nasil-calisir" element={<HowItWorks />} />
               <Route path="/hakkimizda" element={<About />} />
               <Route path="/iletisim" element={<Contact />} />
+              <Route path="/admin/mesajlar" element={<AdminMessages />} />
             </Routes>
           </PageTransition>
         </div>
@@ -809,9 +811,9 @@ function App() {
                   <motion.div 
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-6 py-3 rounded-xl text-xs font-semibold flex items-center gap-2"
+                    className="bg-amber-500/10 border border-amber-500/20 text-amber-400 px-6 py-3 rounded-xl text-xs font-semibold flex items-center gap-2"
                   >
-                    <LuBadgeCheck className="text-lg" /> Bültene başarıyla kaydoldunuz. Teşekkürler!
+                    <LuSparkles className="text-lg animate-pulse" /> Bülten sistemimiz yakında aktif olacaktır. İlginiz için teşekkür ederiz!
                   </motion.div>
                 ) : (
                   <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-2 w-full max-w-md">

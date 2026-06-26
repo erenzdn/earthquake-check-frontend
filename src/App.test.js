@@ -1,8 +1,11 @@
 import { render, screen } from '@testing-library/react';
 import App from './App';
 
-test('renders learn react link', () => {
+jest.mock("./components/Map", () => () => <div data-testid="mock-map">Mock Map</div>);
+jest.mock("./components/PageTransition", () => ({ children }) => <div>{children}</div>);
+
+test('renders app without crashing', () => {
   render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+  const titleElements = screen.getAllByText(/Deprem Risk Analizi/i);
+  expect(titleElements.length).toBeGreaterThan(0);
 });

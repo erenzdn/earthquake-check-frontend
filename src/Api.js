@@ -63,7 +63,9 @@ function buildEvaluationPayload(rawPayload = {}) {
 
 export async function fetchEvaluation(rawPayload) {
     const payload = buildEvaluationPayload(rawPayload);
-    console.debug("[fetchEvaluation] submit payload:", payload);
+    if (process.env.NODE_ENV !== "production") {
+        console.debug("[fetchEvaluation] submit payload:", payload);
+    }
 
     const response = await fetch(BUILDING_EVALUATION_URL, {
         method: "POST",
@@ -72,7 +74,9 @@ export async function fetchEvaluation(rawPayload) {
         },
         body: JSON.stringify(payload)
     });
-    console.debug("[fetchEvaluation] response status:", response.status);
+    if (process.env.NODE_ENV !== "production") {
+        console.debug("[fetchEvaluation] response status:", response.status);
+    }
     let data = null;
 
     try {
@@ -82,8 +86,10 @@ export async function fetchEvaluation(rawPayload) {
     }
 
     if (!response.ok) {
-        console.error("[fetchEvaluation] error response body:", data);
-        console.error("[fetchEvaluation] error details:", data?.details);
+        if (process.env.NODE_ENV !== "production") {
+            console.error("[fetchEvaluation] error response body:", data);
+            console.error("[fetchEvaluation] error details:", data?.details);
+        }
         const errorMessage =
             data?.message ||
             data?.error ||
@@ -96,6 +102,51 @@ export async function fetchEvaluation(rawPayload) {
         const error = new Error(errorMessage);
         error.status = response.status;
         error.details = data?.details || null;
+        error.responseBody = data;
+        throw error;
+    }
+
+    return data;
+}
+
+export async function submitContactMessage(payload) {
+    const response = await fetch(`${API_BASE_URL}/api/contact/messages`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            fullName: payload.fullName,
+            email: payload.email,
+            subject: payload.subject,
+            message: payload.message
+        })
+    });
+
+    let data = null;
+    try {
+        data = await response.json();
+    } catch (error) {
+        data = null;
+    }
+
+    if (!response.ok) {
+        if (process.env.NODE_ENV !== "production") {
+            console.error("[submitContactMessage] error response body:", data);
+        }
+        const errorMessage =
+            data?.message ||
+            data?.error ||
+            data?.errors?.[0]?.message ||
+            (typeof data === "string" ? data : null) ||
+            (response.status === 429
+                ? "Çok fazla mesaj gönderdiniz, lütfen daha sonra tekrar deneyin."
+                : response.status === 400
+                ? "Gönderilen bilgiler geçersiz. Lütfen alanları kontrol edip tekrar deneyin."
+                : "Sunucu hatası oluştu.");
+
+        const error = new Error(errorMessage);
+        error.status = response.status;
         error.responseBody = data;
         throw error;
     }

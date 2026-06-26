@@ -41,6 +41,7 @@ describe("AddressForm validation and API errors", () => {
   test("yearBuilt boşken submit request atmadan alan hatası gösterir", async () => {
     render(<AddressForm />);
 
+    fireEvent.change(screen.getByLabelText("Adres Bilgisi"), { target: { value: "Test Mahallesi, 123. Sokak, İstanbul" } });
     fireEvent.click(screen.getByRole("button", { name: "Devam Et" }));
     fireEvent.change(screen.getByLabelText("Kat Sayısı"), { target: { value: "5" } });
     fireEvent.click(screen.getByRole("button", { name: "Risk Analizi Yap" }));
@@ -59,6 +60,7 @@ describe("AddressForm validation and API errors", () => {
 
     render(<AddressForm />);
 
+    fireEvent.change(screen.getByLabelText("Adres Bilgisi"), { target: { value: "Test Mahallesi, 123. Sokak, İstanbul" } });
     fireEvent.click(screen.getByRole("button", { name: "Devam Et" }));
     fireEvent.change(screen.getByLabelText("Yapım Yılı"), { target: { value: "2000" } });
     fireEvent.change(screen.getByLabelText("Kat Sayısı"), { target: { value: "7" } });
