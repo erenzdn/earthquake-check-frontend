@@ -30,6 +30,7 @@ import Navbar from "./components/Navbar";
 import HowItWorks from "./components/HowItWorks";
 import About from "./components/About";
 import Contact from "./components/Contact";
+import AdminMessages from "./components/AdminMessages";
 import PageTransition from "./components/PageTransition";
 
 // Ana Sayfa Componenti
@@ -629,16 +630,12 @@ function Home() {
 }
 
 function App() {
-  const [subscribed, setSubscribed] = useState(false);
-  const [email, setEmail] = useState("");
+  const [newsletterNotice, setNewsletterNotice] = useState("");
 
   const handleSubscribe = (e) => {
     e.preventDefault();
-    if (email.trim()) {
-      setSubscribed(true);
-      setEmail("");
-      setTimeout(() => setSubscribed(false), 5000);
-    }
+    setNewsletterNotice("Bülten kaydı yakında aktif olacaktır.");
+    setTimeout(() => setNewsletterNotice(""), 5000);
   };
 
   useEffect(() => {
@@ -660,6 +657,7 @@ function App() {
               <Route path="/nasil-calisir" element={<HowItWorks />} />
               <Route path="/hakkimizda" element={<About />} />
               <Route path="/iletisim" element={<Contact />} />
+              <Route path="/admin/mesajlar" element={<AdminMessages />} />
             </Routes>
           </PageTransition>
         </div>
@@ -805,24 +803,22 @@ function App() {
               </div>
               
               <div className="z-10 w-full md:w-auto shrink-0">
-                {subscribed ? (
-                  <motion.div 
+                {newsletterNotice ? (
+                  <motion.div
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-6 py-3 rounded-xl text-xs font-semibold flex items-center gap-2"
+                    className="bg-amber-500/10 border border-amber-500/20 text-amber-300 px-6 py-3 rounded-xl text-xs font-semibold"
                   >
-                    <LuBadgeCheck className="text-lg" /> Bültene başarıyla kaydoldunuz. Teşekkürler!
+                    {newsletterNotice}
                   </motion.div>
                 ) : (
                   <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-2 w-full max-w-md">
                     <div className="relative flex-grow">
                       <LuMail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-sm" />
-                      <input 
-                        type="email" 
+                      <input
+                        type="email"
                         required
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="E-posta adresiniz" 
+                        placeholder="E-posta adresiniz"
                         className="bg-slate-950/80 border border-slate-800 focus:border-indigo-500 rounded-xl pl-10 pr-4 py-3 text-xs text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 w-full font-sans transition-all"
                       />
                     </div>

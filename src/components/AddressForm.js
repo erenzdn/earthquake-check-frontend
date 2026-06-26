@@ -50,6 +50,11 @@ function AddressForm() {
   const MAX_YEAR_BUILT = new Date().getFullYear();
   const MIN_FLOOR_COUNT = 0;
   const MAX_FLOOR_COUNT = 100;
+  const MAX_ADDRESS_LENGTH = 500;
+  const VALID_SAFETY_GRADES = ["A", "B", "C", "D", "E", "F"];
+
+  const normalizeSafetyGrade = (grade) =>
+    VALID_SAFETY_GRADES.includes(grade) ? grade : "C";
 
   const sanitizeNumericInput = (value) => (value || "").replace(/[<>'";-]/g, "").replace(/\D/g, "");
 
@@ -242,7 +247,11 @@ function AddressForm() {
 
       // If API succeeded, transition to Step 3 (Results)
       if (apiResult) {
-        setEvaluationResult(apiResult);
+        const normalizedResult = {
+          ...apiResult,
+          safetyGrade: normalizeSafetyGrade(apiResult.safetyGrade)
+        };
+        setEvaluationResult(normalizedResult);
         setApiFeedback({ type: "success", message: "Değerlendirme başarıyla tamamlandı." });
         setIsAnalyzing(false);
         setFormStep(3);
@@ -264,6 +273,25 @@ function AddressForm() {
     setGeneralError("");
     setApiFeedback(null);
     setFieldErrors({});
+
+    const trimmedAddress = address.trim();
+    const hasAddress = trimmedAddress.length > 0;
+    const hasCoordinates = mapCoordinates != null;
+
+    if (!hasAddress && !hasCoordinates) {
+      setFieldErrors({
+        location: "Devam etmek için adres girin veya haritadan konum seçin."
+      });
+      return;
+    }
+
+    if (trimmedAddress.length > MAX_ADDRESS_LENGTH) {
+      setFieldErrors({
+        address: `Adres en fazla ${MAX_ADDRESS_LENGTH} karakter olabilir.`
+      });
+      return;
+    }
+
     setFormStep(2);
   };
 
@@ -402,10 +430,13 @@ function AddressForm() {
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
                   placeholder="Tam adresinizi giriniz"
+                  maxLength={MAX_ADDRESS_LENGTH}
                   variants={inputVariants}
                   whileFocus="focus"
                   initial="blur"
                 />
+                {fieldErrors.address && <div className="form-error">{fieldErrors.address}</div>}
+                {fieldErrors.location && <div className="form-error">{fieldErrors.location}</div>}
                 <p className="form-hint">
                   Adres doğruluğu düşük olabilir, haritadan konum doğrulamanız önerilir.
                 </p>
