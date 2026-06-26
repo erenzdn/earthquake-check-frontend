@@ -4994,5 +4994,553 @@ body {
   filter: blur(0.5px);
 }
 
+/* ==========================================
+   Deprem Risk Analizi - Baskı (PDF) Stilleri
+   ========================================== */
+@media screen {
+  .print-report-wrapper {
+    display: none;
+  }
+}
+
+
+@media print {
+  /* Tarayıcı varsayılan yazdırma marjlarını sıfırla (A4 tam boyut kullanımı için) */
+  @page {
+    size: A4;
+    margin: 0 !important;
+  }
+
+  /* Ekran üzerindeki TÜM anasayfa bölümlerini gizle (Böylece sadece rapor basılır) */
+  header,
+  section:not(#risk-form),
+  .App-header, 
+  .app-description, 
+  .form-progress, 
+  .form-title,
+  .result-container, 
+  .result-actions, 
+  footer, 
+  nav, 
+  .navbar,
+  button,
+  .back-button,
+  .submit-button,
+  .glow-halo,
+  .address-mode-toggle,
+  #risk-form .text-center {
+    display: none !important;
+  }
+
+  body {
+    background-color: #ffffff !important;
+    color: #1e293b !important;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    -webkit-print-color-adjust: exact !important; /* Renklerin basılmasını zorunlu kıl */
+    print-color-adjust: exact !important;
+  }
+
+  /* Kapsayıcıların tüm kenarlık, gölge ve dolgularını sıfırla (Taşmaları ve boş sayfaları önler) */
+  #risk-form,
+  #risk-form > div,
+  .risk-form-glow-shell,
+  .risk-form-glow-shell > div,
+  .form-container {
+    box-shadow: none !important;
+    border: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    border-radius: 0 !important;
+  }
+
+  .print-report-wrapper {
+    display: block !important;
+    width: 210mm;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    box-sizing: border-box;
+  }
+
+  /* A4 Fiziksel Sayfa Şablonu */
+  .print-page {
+    width: 210mm;
+    height: 295mm; /* Tarayıcı yuvarlama hatalarından ötürü boş sayfa oluşmasını önlemek için 297mm'den 295mm'ye çekildi */
+    padding: 20mm 18mm;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    page-break-after: always;
+    break-after: page;
+    page-break-inside: avoid;
+    break-inside: avoid;
+    background: #ffffff !important;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .print-page:last-child {
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+
+  /* Üst Bilgi (Header) */
+  .print-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 5mm;
+    margin-bottom: 6mm;
+  }
+
+  .print-logo-section {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .print-logo-icon {
+    color: #1b61c9 !important;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+  }
+
+  .print-logo-text {
+    font-size: 20px;
+    font-weight: 800;
+    color: #0f172a !important;
+    letter-spacing: -0.5px;
+  }
+
+  .print-meta-section {
+    text-align: right;
+    font-size: 11px;
+    color: #64748b !important;
+    line-height: 1.4;
+  }
+
+  /* Alt Bilgi (Footer) */
+  .print-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #e2e8f0;
+    padding-top: 4mm;
+    margin-top: 4mm;
+    font-size: 10px;
+    color: #94a3b8 !important;
+  }
+
+  .print-watermark {
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: #94a3b8 !important;
+  }
+
+  /* İçerik Alanı */
+  .print-body {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Sayfa 1: Kapak ve Özet */
+  .print-cover-title-box {
+    text-align: center;
+    margin: 10mm 0 12mm 0;
+  }
+
+  .print-cover-tag {
+    font-size: 12px;
+    font-weight: 700;
+    color: #1b61c9 !important;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  .print-cover-title {
+    font-size: 28px;
+    font-weight: 800;
+    color: #0f172a !important;
+    line-height: 1.2;
+  }
+
+  .print-main-badge-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 12mm;
+    position: relative;
+  }
+
+  .print-badge-circle {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    font-weight: 900;
+    color: white !important;
+    margin-bottom: 4mm;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  }
+
+  .print-badge-label {
+    font-size: 20px;
+    font-weight: 700;
+    color: #0f172a !important;
+    margin-bottom: 2px;
+  }
+
+  .print-badge-sublabel {
+    font-size: 13px;
+    color: #64748b !important;
+  }
+
+  .print-info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6mm;
+    margin-bottom: 10mm;
+  }
+
+  .print-info-card {
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 4mm 5mm;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .print-info-card-icon {
+    font-size: 22px;
+    color: #64748b !important;
+    display: flex;
+    align-items: center;
+  }
+
+  .print-info-card-detail {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .print-info-card-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: #64748b !important;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .print-info-card-value {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1e293b !important;
+  }
+
+  .print-overview-card {
+    border-left: 4px solid #1b61c9;
+    background: #f8fafc !important;
+    padding: 5mm;
+    border-radius: 0 8px 8px 0;
+    margin-bottom: 6mm;
+  }
+
+  .print-overview-card h3 {
+    margin: 0 0 2mm 0;
+    font-size: 15px;
+    font-weight: 700;
+    color: #0f172a !important;
+  }
+
+  .print-overview-card p {
+    margin: 0;
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: #334155 !important;
+  }
+
+  .print-percentage-container {
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 4mm 5mm;
+  }
+
+  .print-percentage-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 3mm;
+  }
+
+  .print-percentage-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #0f172a !important;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .print-percentage-value {
+    font-size: 15px;
+    font-weight: 800;
+    color: #1b61c9 !important;
+  }
+
+  .print-percentage-bar-outer {
+    height: 10px;
+    background: #e2e8f0 !important;
+    border-radius: 5px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .print-percentage-bar-inner {
+    height: 100%;
+    border-radius: 5px;
+  }
+
+  /* Sayfa 2: Grafikler ve Bilimsel Açıklamalar */
+  .print-section-title {
+    font-size: 16px;
+    font-weight: 800;
+    color: #0f172a !important;
+    margin: 0 0 4mm 0;
+    padding-bottom: 2mm;
+    border-bottom: 1.5px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .print-graphics-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 6mm;
+    margin-bottom: 6mm;
+  }
+
+  .print-graphic-box {
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 4mm;
+    background: #ffffff !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
+  }
+
+  .print-graphic-box h4 {
+    margin: 0 0 3mm 0;
+    font-size: 12px;
+    font-weight: 700;
+    color: #334155 !important;
+    text-align: center;
+    width: 100%;
+  }
+
+  /* Sismik Parametreler Tablosu */
+  .print-param-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1mm;
+    font-size: 9.5px;
+  }
+  
+  .print-param-table th, .print-param-table td {
+    border: 1px solid #e2e8f0;
+    padding: 1.8mm 2.2mm;
+    text-align: left;
+  }
+  
+  .print-param-table th {
+    background-color: #f8fafc !important;
+    font-weight: 700;
+    color: #0f172a !important;
+  }
+  
+  .print-param-table td {
+    color: #334155 !important;
+  }
+
+  .print-param-table tr:nth-child(even) td {
+    background-color: #f8fafc/50 !important;
+  }
+
+  .print-scientific-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 4mm;
+  }
+
+  .print-scientific-item {
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 4mm;
+  }
+
+  .print-scientific-item h5 {
+    margin: 0 0 1.5mm 0;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #0f172a !important;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .print-scientific-item p {
+    margin: 0;
+    font-size: 11px;
+    line-height: 1.45;
+    color: #475569 !important;
+  }
+
+  /* Sayfa 3: Öneriler ve Eylem Planı */
+  .print-recommendation-box {
+    border-left: 4px solid #1b61c9;
+    background: #f8fafc !important;
+    padding: 5mm;
+    border-radius: 0 8px 8px 0;
+    margin-bottom: 6mm;
+  }
+
+  .print-recommendation-box h4 {
+    margin: 0 0 2mm 0;
+    font-size: 14px;
+    font-weight: 700;
+    color: #0f172a !important;
+  }
+
+  .print-recommendation-box p {
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.5;
+    color: #334155 !important;
+  }
+
+  .print-steps-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6mm;
+    margin-bottom: 5mm;
+  }
+
+  .print-step-column h4 {
+    font-size: 13px;
+    font-weight: 700;
+    color: #0f172a !important;
+    margin: 0 0 3mm 0;
+  }
+
+  .print-step-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3mm;
+  }
+
+  .print-step-list li {
+    font-size: 11px;
+    line-height: 1.4;
+    color: #475569 !important;
+    padding-left: 5mm;
+    position: relative;
+  }
+
+  .print-step-list li::before {
+    content: "•";
+    color: #1b61c9 !important;
+    font-size: 16px;
+    position: absolute;
+    left: 1.5mm;
+    top: -1px;
+  }
+
+  /* Onay ve İmza Alanı */
+  .print-signature-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px dashed #cbd5e1;
+    border-radius: 8px;
+    padding: 3.5mm 4.5mm;
+    background: #f8fafc !important;
+    margin-bottom: 4mm;
+  }
+
+  .print-signature-block {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8mm;
+    font-size: 9.5px;
+    color: #475569 !important;
+    width: 42%;
+  }
+
+  .print-signature-title {
+    font-weight: 700;
+    color: #0f172a !important;
+    border-bottom: 1px solid #cbd5e1;
+    padding-bottom: 1mm;
+    margin-bottom: 1mm;
+  }
+
+  .print-signature-text {
+    font-size: 8.5px;
+    color: #64748b !important;
+    font-style: italic;
+  }
+
+  .print-verification-stamp {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .print-qr-mock {
+    width: 40px;
+    height: 40px;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    padding: 1px;
+    background: white !important;
+  }
+
+  .print-disclaimer {
+    background: #fff8f1 !important;
+    border: 1px solid #ffedd5;
+    border-radius: 8px;
+    padding: 3.5mm 4mm;
+    font-size: 9.5px;
+    line-height: 1.4;
+    color: #7c2d12 !important;
+  }
+
+  .print-disclaimer strong {
+    color: #ea580c !important;
+  }
+}
+
+
 
 

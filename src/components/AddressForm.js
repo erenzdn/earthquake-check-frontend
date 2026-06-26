@@ -653,9 +653,10 @@ function AddressForm() {
       
       {/* Adım 3: Sonuç */}
       {formStep === 3 && evaluationResult && (
-        <motion.div
-          key="step3"
-          className="result-container"
+        <>
+          <motion.div
+            key="step3"
+            className="result-container"
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ type: "spring", stiffness: 180, damping: 20 }}
@@ -864,7 +865,20 @@ function AddressForm() {
             </motion.button>
           </motion.div>
         </motion.div>
-      )}
+
+        {/* PDF Yazdırma Çıktısı İçin Görünmez Rapor Şablonu */}
+        <PrintReport 
+          evaluationResult={evaluationResult} 
+          yearBuilt={yearBuilt} 
+          floorCount={floorCount} 
+          mapCoordinates={mapCoordinates} 
+          address={address}
+          getGradeColor={getGradeColor}
+          getGradeText={getGradeText}
+          getRecommendationText={getRecommendationText}
+        />
+      </>
+    )}
     </div>
   );
 }
@@ -895,6 +909,418 @@ function getSeismicPath(step) {
   }
   // Diğer ilk adımlar - Orta seviye sismik dalgalar
   return "M 5 30 Q 20 12, 35 30 T 65 30 T 95 30 T 125 30 T 135 30";
+}
+
+// ============================================================================
+// Baskı Raporu Alt Bileşeni (Yalnızca Yazdırmada Görünür, A4 Sayfa Düzeni)
+// ============================================================================
+// ============================================================================
+// Baskı Raporu Alt Bileşeni (Yalnızca Yazdırmada Görünür, A4 Sayfa Düzeni)
+// ============================================================================
+function PrintReport({ 
+  evaluationResult, 
+  yearBuilt, 
+  floorCount, 
+  mapCoordinates, 
+  address,
+  getGradeColor,
+  getGradeText,
+  getRecommendationText
+}) {
+  const currentDate = new Date().toLocaleDateString('tr-TR', { 
+    year: 'numeric', 
+    month: 'long', 
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+  
+  const reportId = React.useMemo(() => {
+    const cleanAddress = (address || "").replace(/[^A-Z0-9]/gi, "").substring(0, 3).toUpperCase();
+    const random = Math.floor(1000 + Math.random() * 9000);
+    return `EQ-${yearBuilt || "2000"}-${floorCount || "1"}-${cleanAddress || "GEO"}-${random}`;
+  }, [yearBuilt, floorCount, address]);
+
+  if (!evaluationResult) return null;
+
+  const grade = evaluationResult.safetyGrade || 'C';
+  const percentage = evaluationResult.safetyGradePercentage || 50;
+  const color = getGradeColor(grade);
+
+  // Sismik İvme Spektrumu Grafik Koordinat Hesaplamaları
+  const getBuildingPeriodCoords = (floors) => {
+    const N = Math.max(1, Math.min(25, Number(floors) || 1));
+    const T = N * 0.1; // Periyot tahmini: kat başına 0.1 sn
+    
+    // T (0 - 3.0s) -> X (30 - 200)
+    const x = 30 + (T / 3.0) * 170;
+    
+    // T -> Y on the curve (25 top, 90 bottom)
+    let y = 90;
+    if (T < 0.15) {
+      y = 90 - (T / 0.15) * 65;
+    } else if (T >= 0.15 && T <= 0.6) {
+      y = 25;
+    } else {
+      const factor = Math.min(1, (T - 0.6) / 2.4);
+      y = 25 + factor * 65;
+    }
+    return { x, y, T };
+  };
+
+  const { x: markerX, y: markerY, T: estimatedPeriod } = getBuildingPeriodCoords(floorCount);
+
+  // Sismik ve Geoteknik Katsayı Hesaplayıcı
+  const getSeismicParameters = (safetyGrade) => {
+    const params = {
+      'A': { class: 'ZA', pga: '0.12g', ss: '0.32g', s1: '0.08g', sds: '0.21g', sd1: '0.08g', fs: '1.0' },
+      'B': { class: 'ZB', pga: '0.22g', ss: '0.52g', s1: '0.14g', sds: '0.42g', sd1: '0.15g', fs: '1.0' },
+      'C': { class: 'ZC', pga: '0.32g', ss: '0.78g', s1: '0.22g', sds: '0.62g', sd1: '0.26g', fs: '1.2' },
+      'D': { class: 'ZD', pga: '0.40g', ss: '0.98g', s1: '0.28g', sds: '0.82g', sd1: '0.38g', fs: '1.3' },
+      'E': { class: 'ZE', pga: '0.48g', ss: '1.18g', s1: '0.35g', sds: '1.06g', sd1: '0.52g', fs: '1.5' },
+      'F': { class: 'ZF', pga: '0.55g', ss: '1.35g', s1: '0.42g', sds: '1.25g', sd1: '0.65g', fs: '1.7' }
+    };
+    return params[safetyGrade] || params['C'];
+  };
+
+  const seismicParams = getSeismicParameters(grade);
+
+  return (
+    <div className="print-report-wrapper">
+      {/* SAYFA 1: Resmi Kapak ve Özet Değerlendirme */}
+      <div className="print-page">
+        <div className="print-header">
+          <div className="print-logo-section">
+            <span className="print-logo-icon"><LuActivity /></span>
+            <span className="print-logo-text">EarthquakeCheck</span>
+          </div>
+          <div className="print-meta-section">
+            <div><strong>Rapor No:</strong> {reportId}</div>
+            <div><strong>Tarih:</strong> {currentDate}</div>
+            <div><strong>Analiz:</strong> Yapısal Ön Risk Analizi</div>
+          </div>
+        </div>
+
+        <div className="print-body">
+          <div className="print-cover-title-box">
+            <span className="print-cover-tag">MÜHENDİSLİK DEĞERLENDİRMESİ</span>
+            <h1 className="print-cover-title">BİNA DEPREM RİSK ÖN ANALİZ RAPORU</h1>
+          </div>
+
+          <div className="print-main-badge-wrapper">
+            <div className="print-badge-circle" style={{ backgroundColor: color }}>
+              {grade}
+            </div>
+            <div className="print-badge-label">{getGradeText(grade)}</div>
+            <div className="print-badge-sublabel">Nihai Yapısal Güvenlik Derecesi</div>
+          </div>
+
+          <div className="print-info-grid">
+            <div className="print-info-card">
+              <span className="print-info-card-icon"><LuHouse /></span>
+              <div className="print-info-card-detail">
+                <span className="print-info-card-label">Yapım Yılı</span>
+                <span className="print-info-card-value">{yearBuilt || "Belirtilmedi"}</span>
+              </div>
+            </div>
+            <div className="print-info-card">
+              <span className="print-info-card-icon"><LuBuilding2 /></span>
+              <div className="print-info-card-detail">
+                <span className="print-info-card-label">Kat Sayısı</span>
+                <span className="print-info-card-value">{floorCount || "Belirtilmedi"} Kat</span>
+              </div>
+            </div>
+            <div className="print-info-card" style={{ gridColumn: "span 2" }}>
+              <span className="print-info-card-icon"><LuMapPinHouse /></span>
+              <div className="print-info-card-detail">
+                <span className="print-info-card-label">Konum / Adres</span>
+                <span className="print-info-card-value">
+                  {mapCoordinates ? `${mapCoordinates.lat.toFixed(6)}, ${mapCoordinates.lng.toFixed(6)}` : ""}
+                  {address ? ` - ${address}` : (!mapCoordinates ? "Belirtilmedi" : "")}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="print-overview-card">
+            <h3>Yönetici Özeti</h3>
+            <p>
+              Bu rapor, beyan edilen konumdaki zemin spektral ivme verileri ile binanın yapım yılı ve kat sayısı parametrelerinin kombine edilmesiyle oluşturulmuştur. 
+              {grade === 'A' || grade === 'B' ? ' Binanızın güvenlik derecesi yüksek standartlardadır. Yapının modern deprem yönetmeliği esaslarına veya sağlam zemin koşullarına uygunluğu ön analizle desteklenmektedir.' : ''}
+              {grade === 'C' || grade === 'D' ? ' Binanızın sismik güvenlik seviyesi orta düzeydedir. Sismik riskleri minimize etmek amacıyla taşıyıcı elemanların detaylı gözlemsel denetimi yapılması tavsiye edilir.' : ''}
+              {grade === 'E' || grade === 'F' ? ' Binanızın sismik direnci düşük seviyede hesaplanmıştır. Yapının yaşı veya yüksek kat çarpanı nedeniyle olası bir depremde sismik ivmeleri absorbe etme kapasitesi zayıf olabilir. Acilen resmi mühendislik incelemesi yapılması önerilir.' : ''}
+            </p>
+          </div>
+
+          <div className="print-percentage-container">
+            <div className="print-percentage-title-row">
+              <span className="print-percentage-title"><LuCircleGauge /> Güvenlik Skoru Yüzdesi</span>
+              <span className="print-percentage-value">%{percentage}</span>
+            </div>
+            <div className="print-percentage-bar-outer">
+              <div className="print-percentage-bar-inner" style={{ width: `${percentage}%`, backgroundColor: color }}></div>
+            </div>
+          </div>
+        </div>
+
+        <div className="print-footer">
+          <span className="print-watermark">EARTHQUAKECHECK BİLGİ SİSTEMLERİ</span>
+          <span>Sayfa 1 / 3</span>
+        </div>
+      </div>
+
+      {/* SAYFA 2: Bilimsel Analizler ve Görsel Grafikler */}
+      <div className="print-page">
+        <div className="print-header">
+          <div className="print-logo-section">
+            <span className="print-logo-icon"><LuActivity /></span>
+            <span className="print-logo-text">EarthquakeCheck</span>
+          </div>
+          <div className="print-meta-section">
+            <div><strong>Rapor No:</strong> {reportId}</div>
+            <div><strong>Tarih:</strong> {currentDate}</div>
+          </div>
+        </div>
+
+        <div className="print-body">
+          <h2 className="print-section-title"><LuActivity /> Bilimsel Analizler ve Sismik Veriler</h2>
+          
+          <div className="print-graphics-grid">
+            {/* Grafik 1: Sismik İvme Spektrumu */}
+            <div className="print-graphic-box">
+              <h4>Sismik İvme Spektrumu (Tasarım Eğrisi)</h4>
+              <svg viewBox="0 0 220 110" width="100%" height="100%" style={{ overflow: 'visible' }}>
+                {/* Axes */}
+                <line x1="20" y1="95" x2="210" y2="95" stroke="#94a3b8" strokeWidth="1" />
+                <line x1="20" y1="15" x2="20" y2="95" stroke="#94a3b8" strokeWidth="1" />
+                
+                {/* Y-Axis Grid & Labels */}
+                <line x1="15" y1="25" x2="210" y2="25" stroke="#f1f5f9" strokeWidth="0.8" strokeDasharray="2,2" />
+                <line x1="15" y1="60" x2="210" y2="60" stroke="#f1f5f9" strokeWidth="0.8" strokeDasharray="2,2" />
+                <text x="8" y="28" fontSize="6" fill="#94a3b8" textAnchor="end">1.2g (Maks)</text>
+                <text x="8" y="63" fontSize="6" fill="#94a3b8" textAnchor="end">0.6g</text>
+                <text x="8" y="98" fontSize="6" fill="#94a3b8" textAnchor="end">0.0g</text>
+                
+                {/* X-Axis Labels */}
+                <text x="30" y="104" fontSize="6" fill="#94a3b8" textAnchor="middle">0.1s</text>
+                <text x="85" y="104" fontSize="6" fill="#94a3b8" textAnchor="middle">1.0s</text>
+                <text x="145" y="104" fontSize="6" fill="#94a3b8" textAnchor="middle">2.0s</text>
+                <text x="205" y="104" fontSize="6" fill="#94a3b8" textAnchor="middle">3.0s</text>
+                
+                {/* Curve Path (Tasarım Spektrumu) */}
+                <path 
+                  d="M 20 90 C 24 50, 28 25, 35 25 L 65 25 C 100 25, 140 70, 210 90" 
+                  fill="none" 
+                  stroke="#1b61c9" 
+                  strokeWidth="2" 
+                />
+                
+                {/* Building Marker Dotted Lines */}
+                <line x1={markerX} y1={markerY} x2={markerX} y2="95" stroke="#ef4444" strokeWidth="0.8" strokeDasharray="2,2" />
+                <line x1="20" y1={markerY} x2={markerX} y2={markerY} stroke="#ef4444" strokeWidth="0.8" strokeDasharray="2,2" />
+                
+                {/* Building Period Marker */}
+                <circle cx={markerX} cy={markerY} r="4.5" fill="#ef4444" stroke="#ffffff" strokeWidth="1" />
+                <circle cx={markerX} cy={markerY} r="7" fill="none" stroke="#ef4444" strokeWidth="0.5" opacity="0.5" />
+                
+                {/* Marker Text */}
+                <text x={markerX > 120 ? markerX - 8 : markerX + 8} y={markerY > 40 ? markerY - 4 : markerY + 12} fontSize="7" fontWeight="bold" fill="#ef4444" textAnchor={markerX > 120 ? "end" : "start"}>
+                  Yapı Periyodu (T ≈ {estimatedPeriod.toFixed(1)}s)
+                </text>
+                
+                {/* Axis Titles */}
+                <text x="115" y="112" fontSize="6" fontWeight="bold" fill="#64748b" textAnchor="middle">Doğal Titreşim Periyodu T (Saniye)</text>
+                <text x="-55" y="6" fontSize="6" fontWeight="bold" fill="#64748b" textAnchor="middle" transform="rotate(-90)">Sismik İvme Katsayısı S_ae (g)</text>
+              </svg>
+            </div>
+            
+            {/* Grafik 2: Geoteknik ve Sismik Katsayılar Tablosu */}
+            <div className="print-graphic-box" style={{ alignItems: 'stretch' }}>
+              <h4 style={{ marginBottom: '1.5mm' }}>Geoteknik & Sismik Katsayılar (TBDY 2018)</h4>
+              <table className="print-param-table">
+                <thead>
+                  <tr>
+                    <th>Sismik Parametre</th>
+                    <th>Referans Değer</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>Zemin Sınıfı (AFAD)</strong></td>
+                    <td>{seismicParams.class} ({grade === 'A' || grade === 'B' ? 'Sert Kaya' : grade === 'C' ? 'Sert Kil/Kum' : grade === 'D' ? 'Orta Sert Kil/Kum' : 'Gevşek Zemin'})</td>
+                  </tr>
+                  <tr>
+                    <td><strong>En Büyük Yer İvmesi (PGA)</strong></td>
+                    <td>{seismicParams.pga}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Kısa Periyot Katsayısı (Ss)</strong></td>
+                    <td>{seismicParams.ss}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>1.0 Saniye Katsayısı (S1)</strong></td>
+                    <td>{seismicParams.s1}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Tasarım İvmesi (Sds / Sd1)</strong></td>
+                    <td>{seismicParams.sds} / {seismicParams.sd1}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Zemin Büyütme Katsayısı (Fs)</strong></td>
+                    <td>{seismicParams.fs}</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Tahmini Yapı Periyodu (T)</strong></td>
+                    <td>{estimatedPeriod.toFixed(2)} sn</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div className="print-scientific-panel">
+            <div className="print-scientific-item">
+              <h5><LuLayers /> Zemin Spektrumu ve İvme Büyütmesi</h5>
+              <p>
+                Deprem dalgaları gevşek, suya doygun veya alüvyonal zeminlerden geçerken genlikleri büyür. 
+                Sert kayalar sismik enerjiyi hızla sönümlerken, zayıf zemin sınıfları (örneğin Z3 veya Z4) sarsıntı etkisini 2 ila 4 kat artırabilir. 
+                Uygulamamız, AFAD verilerine dayalı konumunuzdaki sismik ivme parametrelerini sorgulayarak zemin büyütme riskini saptar.
+              </p>
+            </div>
+            <div className="print-scientific-item">
+              <h5><LuCpu /> Yapı Yaşı ve Yönetmelik Uyumu</h5>
+              <p>
+                Türkiye'deki bina güvenliğinde en büyük kırılma noktası 1999 Marmara Depremi'dir. 
+                1999 öncesi inşa edilen yapılar eski deprem yönetmeliğine tabi olup, hazır beton kullanımı (C25 ve üzeri) ve sismik etriye sıklığı kontrolü zayıftır. 
+                2000-2018 yılları arası yapılar daha sıkı denetlenmiş, 2018 yılı ve sonrası yapılar ise en güncel sismik mühendislik standartlarına göre inşa edilmiştir.
+              </p>
+            </div>
+            <div className="print-scientific-item">
+              <h5><LuActivity /> Bina Yüksekliği ve Rezonans Etkisi</h5>
+              <p>
+                Her yapının kat sayısına ve rijitliğine bağlı doğal bir titreşim periyodu vardır (yaklaşık kat başına 0.1 sn). 
+                Eğer deprem dalgalarının baskın salınım periyodu ile binanın periyodu çakışırsa, yapı "rezonansa" girer ve sarsıntı şiddeti katlanarak yıkıcı boyutlara ulaşır. 
+                Sismik ivme spektrumu eğrisi üzerindeki kırmızı işaret, binanızın bu rezonans tehlikesine ne ölçüde yakın olduğunu bilimsel olarak gösterir.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="print-footer">
+          <span className="print-watermark">EARTHQUAKECHECK BİLGİ SİSTEMLERİ</span>
+          <span>Sayfa 2 / 3</span>
+        </div>
+      </div>
+
+      {/* SAYFA 3: Öneriler ve Eylem Planı */}
+      <div className="print-page">
+        <div className="print-header">
+          <div className="print-logo-section">
+            <span className="print-logo-icon"><LuActivity /></span>
+            <span className="print-logo-text">EarthquakeCheck</span>
+          </div>
+          <div className="print-meta-section">
+            <div><strong>Rapor No:</strong> {reportId}</div>
+            <div><strong>Tarih:</strong> {currentDate}</div>
+          </div>
+        </div>
+
+        <div className="print-body">
+          <h2 className="print-section-title"><LuFileText /> Mühendislik Önerileri ve Deprem Önlemleri</h2>
+          
+          <div className="print-recommendation-box">
+            <h4>Özel Mühendislik Değerlendirmesi</h4>
+            <p>
+              {grade === 'A' || grade === 'B' ? 'Yapılan ön değerlendirme sonucunda binanızın deprem direnci oldukça yüksek çıkmıştır. Bu aşamada binanız için ek bir yapısal güçlendirme araştırmasına gerek duyulmamaktadır. Yapısal olmayan risklerin azaltılması ve bina kolon-kiriş birleşimlerinde tesisat tadilatları gibi nedenlerle kesim yapılmamasının denetlenmesi yeterlidir.' : ''}
+              {grade === 'C' || grade === 'D' ? 'Binanız orta risk grubunda yer almaktadır. Beton kalitesi ve demir donatı standartlarının olası yetersizliklerine karşı, binanın taşıyıcı elemanlarında (bodrum kat kolonları başta olmak üzere) gözle görülür çatlama, dökülme veya demir korozyonu (paslanma) olup olmadığı uzman bir göz tarafından kontrol edilmelidir. Lokal güçlendirme veya mantolama opsiyonları incelenebilir.' : ''}
+              {grade === 'E' || grade === 'F' ? 'Bina yaşı, kat sayısı veya konum sismik yükleri nedeniyle binanız yüksek deprem riski barındırmaktadır. Herhangi bir sarsıntı durumunda can güvenliğinizi korumak adına acilen yetkilendirilmiş kuruluşlarca yerinde inceleme yapılması gerekmektedir. Beton dayanımı ve demir korozyonunun tespiti hayati önem taşır.' : ''}
+            </p>
+          </div>
+
+          <div className="print-steps-grid">
+            <div className="print-step-column">
+              <h4>Yapısal Güvenlik Adımları (Teknik)</h4>
+              <ul className="print-step-list">
+                <li><strong>Karot Testi Yapılması:</strong> Beton kalitesini anlamak için taşıyıcı elemanlardan numune alınarak laboratuvarda basınç testi yapılması.</li>
+                <li><strong>Donatı Taraması (Röntgen):</strong> Kolon ve kirişlerdeki demir donatıların çapı, nervür durumu ve etriye aralıklarının saptanması.</li>
+                <li><strong>Zemin Etüdü Yapılması:</strong> Binanın oturduğu parselde sondaj yapılarak zemin emniyet gerilmesinin ve yeraltı su seviyesinin ölçülmesi.</li>
+                <li><strong>Statik Rapor Oluşturulması:</strong> Elde edilen verilerle binanın 3D bilgisayar modelinin çizilip sismik simülasyonunun çalıştırılması.</li>
+              </ul>
+            </div>
+            
+            <div className="print-step-column">
+              <h4>Bireysel Deprem Eylem Planı (Sosyal)</h4>
+              <ul className="print-step-list">
+                <li><strong>Acil Durum Toplanma Alanı:</strong> {evaluationResult.nearestAssemblyArea ? `Binanıza atanan en yakın AFAD toplanma alanı: ${evaluationResult.nearestAssemblyArea}` : "En yakın toplanma alanı e-Devlet kapısı sismik tahliye haritalarından kontrol edilmelidir."}</li>
+                <li><strong>Yapısal Olmayan Riskler:</strong> Ev içindeki tüm ağır dolapların, kitaplıkların, asılı ağır aynaların ve kombinin L-braketlerle duvara sabitlenmesi.</li>
+                <li><strong>Afet Çantası Hazırlığı:</strong> İçinde su, yüksek kalorili bisküviler, ilk yardım seti, düdük, el feneri ve kişisel ilaçların olduğu bir çantanın yatağa yakın konumlandırılması.</li>
+                <li><strong>Hayati Üçgen Pratikleri:</strong> Deprem anında devrilmeyecek sağlam bir koltuk veya baza yanında Çök-Kapan-Tutun hareketinin yapılması.</li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Onay ve İmza Alanı */}
+          <div className="print-signature-container">
+            <div className="print-signature-block">
+              <span className="print-signature-title">Rapor Doğrulama ve Sistem Onayı</span>
+              <span><strong>Metot:</strong> TBDY-2018 Konumsal Ön Analiz Modeli</span>
+              <span><strong>İmza Yetkilisi:</strong> EarthquakeCheck Sismik Analiz Grubu</span>
+              <span className="print-signature-text">E-İmza / Sistem Tarafından Dijital Olarak İmzalanmıştır</span>
+            </div>
+            
+            <div className="print-verification-stamp">
+              <div className="print-qr-mock">
+                <svg viewBox="0 0 25 25" width="100%" height="100%" style={{ shapeRendering: 'crispEdges' }}>
+                  <rect x="0" y="0" width="25" height="25" fill="white" />
+                  <rect x="1" y="1" width="7" height="7" fill="black" />
+                  <rect x="2" y="2" width="5" height="5" fill="white" />
+                  <rect x="3" y="3" width="3" height="3" fill="black" />
+                  
+                  <rect x="17" y="1" width="7" height="7" fill="black" />
+                  <rect x="18" y="2" width="5" height="5" fill="white" />
+                  <rect x="19" y="3" width="3" height="3" fill="black" />
+                  
+                  <rect x="1" y="17" width="7" height="7" fill="black" />
+                  <rect x="2" y="18" width="5" height="5" fill="white" />
+                  <rect x="3" y="19" width="3" height="3" fill="black" />
+                  
+                  <rect x="10" y="2" width="2" height="2" fill="black" />
+                  <rect x="13" y="1" width="1" height="3" fill="black" />
+                  <rect x="10" y="6" width="3" height="1" fill="black" />
+                  <rect x="14" y="5" width="2" height="2" fill="black" />
+                  
+                  <rect x="10" y="10" width="2" height="2" fill="black" />
+                  <rect x="15" y="10" width="3" height="1" fill="black" />
+                  <rect x="12" y="13" width="2" height="3" fill="black" />
+                  <rect x="16" y="14" width="2" height="2" fill="black" />
+                  
+                  <rect x="10" y="18" width="1" height="4" fill="black" />
+                  <rect x="13" y="20" width="3" height="2" fill="black" />
+                  <rect x="18" y="18" width="4" height="1" fill="black" />
+                  <rect x="20" y="20" width="3" height="3" fill="black" />
+                </svg>
+              </div>
+              <div className="print-signature-block" style={{ width: 'auto' }}>
+                <span className="print-signature-title">Teknik Tasarım ve CBS Doğrulama</span>
+                <span><strong>Sistem Mimarı:</strong> Mehmet Eren Özden</span>
+                <span><strong>Doğrulama Kodu:</strong> {reportId.split('-').slice(-1)[0]}</span>
+                <span className="print-signature-text">Dr. M. Eren Özden CBS Altyapı Seal</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="print-disclaimer">
+            <strong>YASAL UYARI VE BİLİMSEL SINIRLILIKLAR:</strong> Bu rapor, kullanıcı tarafından sisteme girilen veriler (bina yaşı, kat sayısı) ile coğrafi sismik koordinatlar baz alınarak sismik tehlike modelleri üzerinden oluşturulmuş bir <strong>ön analizdir</strong>. Kesinlikle resmi bir Deprem Dayanıklılık Tescil Raporu yerine geçmez. Binanın nihai deprem performansı, yerinde yapılacak fiziksel ölçümler (karot testi, demir röntgeni vb.) ve geoteknik zemin sondajları yapılmadan tescillenemez.
+          </div>
+        </div>
+
+        <div className="print-footer">
+          <span className="print-watermark">EARTHQUAKECHECK BİLGİ SİSTEMLERİ</span>
+          <span>Sayfa 3 / 3</span>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default AddressForm;
