@@ -1,4 +1,4 @@
-import { fetchEvaluation } from "./Api";
+import { fetchEvaluation, submitContactMessage } from "./Api";
 
 describe("fetchEvaluation payload normalization", () => {
   beforeEach(() => {
@@ -37,5 +37,40 @@ describe("fetchEvaluation payload normalization", () => {
       longitude: null
     });
     expect(parsedBody.buildingAge).toBeUndefined();
+  });
+});
+
+describe("submitContactMessage", () => {
+  beforeEach(() => {
+    global.fetch = jest.fn();
+  });
+
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
+
+  test("backend ContactRequest ile uyumlu payload gonderir", async () => {
+    global.fetch.mockResolvedValue({
+      ok: true,
+      status: 201,
+      json: async () => ({ id: "1", fullName: "Test" })
+    });
+
+    await submitContactMessage({
+      fullName: "Test Kullanici",
+      email: "test@example.com",
+      subject: "Konu",
+      message: "Bu bir test mesajidir."
+    });
+
+    const [url, requestOptions] = global.fetch.mock.calls[0];
+    expect(url).toContain("/api/contact/messages");
+    expect(requestOptions.method).toBe("POST");
+    expect(JSON.parse(requestOptions.body)).toEqual({
+      fullName: "Test Kullanici",
+      email: "test@example.com",
+      subject: "Konu",
+      message: "Bu bir test mesajidir."
+    });
   });
 });
