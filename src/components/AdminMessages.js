@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   LuLock, LuLogOut, LuMail, LuMailOpen, LuChevronLeft, 
   LuChevronRight, LuShieldAlert, LuRefreshCw, LuUser, 
-  LuCalendar, LuCheckCircle2, LuMessageSquare, LuInbox
+  LuCalendar, LuCircleCheck, LuMessageSquare, LuInbox
 } from 'react-icons/lu';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8081";
@@ -348,7 +348,7 @@ function AdminMessages() {
                           onClick={() => handleMarkAsRead(msg.id)}
                           className="self-start md:self-center flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 hover:text-indigo-800 font-bold text-xs transition-all shadow-sm shrink-0"
                         >
-                          <LuCheckCircle2 className="text-sm" /> Okundu İşaretle
+                          <LuCircleCheck className="text-sm" /> Okundu İşaretle
                         </button>
                       )}
                     </div>

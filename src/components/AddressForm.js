@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Map from "./Map";
 import { motion } from "framer-motion";
 import { fetchEvaluation } from "../Api";
-import { LuShieldAlert, LuHouse, LuBuilding2, LuMapPinHouse, LuPrinter, LuBadgeCheck, LuCircleGauge, LuActivity, LuSearch, LuLayers, LuCpu, LuFileText } from "react-icons/lu";
+import { LuShieldAlert, LuHouse, LuBuilding2, LuMapPinHouse, LuPrinter, LuBadgeCheck, LuCircleGauge, LuActivity, LuSearch, LuLayers, LuCpu, LuFileText, LuMapPin, LuCalendar, LuArrowLeft, LuArrowRight } from "react-icons/lu";
 import { getGeneralErrorMessage, toUserFriendlyFieldErrors } from "../utils/errorMapping";
 
 function AddressForm() {
@@ -28,10 +28,10 @@ function AddressForm() {
       let start = 0;
       const end = evaluationResult.safetyGradePercentage || 0;
       if (end === 0) return;
-      
+
       const duration = 1500; // ms
       const stepTime = Math.max(Math.floor(duration / end), 15);
-      
+
       const timer = setInterval(() => {
         start += 1;
         if (start >= end) {
@@ -41,7 +41,7 @@ function AddressForm() {
           setDisplayPercentage(start);
         }
       }, stepTime);
-      
+
       return () => clearInterval(timer);
     }
   }, [formStep, evaluationResult]);
@@ -94,7 +94,7 @@ function AddressForm() {
     }
     setFloorCount(cleaned);
   };
-  
+
   const normalizeOptionalText = (value) => {
     const trimmed = (value || "").trim();
     return trimmed === "" ? null : trimmed;
@@ -244,7 +244,7 @@ function AddressForm() {
 
       // If API succeeded, transition to Step 3 (Results)
       if (apiResult) {
-        const whitelist = ['A','B','C','D','E','F'];
+        const whitelist = ['A', 'B', 'C', 'D', 'E', 'F'];
         if (!apiResult.safetyGrade || !whitelist.includes(apiResult.safetyGrade)) {
           throw new Error("Sunucudan geçersiz güvenlik derecesi alındı.");
         }
@@ -287,8 +287,8 @@ function AddressForm() {
   // Form içeriğindeki animasyon varyantları
   const formVariants = {
     hidden: { opacity: 0, y: 20 },
-    visible: { 
-      opacity: 1, 
+    visible: {
+      opacity: 1,
       y: 0,
       transition: {
         type: "spring",
@@ -296,8 +296,8 @@ function AddressForm() {
         damping: 20
       }
     },
-    exit: { 
-      opacity: 0, 
+    exit: {
+      opacity: 0,
       y: -20,
       transition: { duration: 0.3 }
     }
@@ -319,10 +319,10 @@ function AddressForm() {
       'E': '#F87171', // Kırmızı
       'F': '#EF4444'  // Koyu Kırmızı
     };
-    
+
     return gradeColors[grade] || '#FCD34D'; // Varsayılan olarak sarı
   };
-  
+
   // Derecelendirmeye göre metni belirle
   const getGradeText = (grade) => {
     const gradeTexts = {
@@ -333,7 +333,7 @@ function AddressForm() {
       'E': 'Düşük Güvenlik',
       'F': 'Çok Düşük Güvenlik'
     };
-    
+
     return gradeTexts[grade] || 'Belirsiz Güvenlik';
   };
 
@@ -347,35 +347,49 @@ function AddressForm() {
       'E': 'Binanız düşük güvenlik seviyesinde. En kısa sürede bir yapı mühendisi ile iletişime geçmeniz tavsiye edilir.',
       'F': 'Binanız çok düşük güvenlik seviyesinde. Acil olarak bir yapı mühendisi ile görüşmelisiniz.'
     };
-    
+
     return recommendations[grade] || 'Binanızın güvenlik durumu belirsiz. Bir yapı mühendisi ile iletişime geçmeniz tavsiye edilir.';
   };
 
 
   return (
-    <div className="form-container">
-      <h2 className="form-title">Deprem Risk Analizi</h2>
-      
+    <div className="form-container-premium">
+      <div className="form-header-premium">
+        <div className="form-header-icon-wrapper">
+          <LuActivity className="form-header-icon" />
+        </div>
+        <h2 className="form-title-premium">Deprem Risk Analizi</h2>
+        <p className="form-subtitle-premium">Binanızın deprem risk durumunu modern sismik modellerle ücretsiz raporlayın.</p>
+      </div>
+
       {/* Adım Göstergesi */}
-      <div className="form-progress">
-        <div className={`progress-step ${formStep >= 1 ? 'active' : ''}`}>
-          <div className="step-indicator">1</div>
-          <span className="step-label">Adres</span>
-        </div>
-        <div className="progress-line"></div>
-        <div className={`progress-step ${formStep >= 2 ? 'active' : ''}`}>
-          <div className="step-indicator">2</div>
-          <span className="step-label">Bina Bilgileri</span>
-        </div>
-        <div className="progress-line"></div>
-        <div className={`progress-step ${formStep >= 3 || isAnalyzing ? 'active' : ''}`}>
-          <div className="step-indicator flex items-center justify-center">
-            {isAnalyzing ? <span className="sim-spinner" style={{ borderWidth: '1.5px' }}></span> : "3"}
+      <div className="form-progress-premium">
+        <div className={`progress-step-premium ${formStep >= 1 ? 'active' : ''} ${formStep > 1 ? 'completed' : ''}`}>
+          <div className="step-indicator-premium">
+            {formStep > 1 ? <LuBadgeCheck className="step-check-icon" /> : "1"}
           </div>
-          <span className="step-label">Sonuç</span>
+          <span className="step-label-premium">Adres</span>
+        </div>
+        <div className={`progress-line-premium ${formStep >= 2 ? 'active' : ''}`}>
+          <div className="progress-line-fill"></div>
+        </div>
+        <div className={`progress-step-premium ${formStep >= 2 ? 'active' : ''} ${formStep > 2 ? 'completed' : ''}`}>
+          <div className="step-indicator-premium">
+            {formStep > 2 ? <LuBadgeCheck className="step-check-icon" /> : "2"}
+          </div>
+          <span className="step-label-premium">Bina Bilgileri</span>
+        </div>
+        <div className={`progress-line-premium ${formStep >= 3 || isAnalyzing ? 'active' : ''}`}>
+          <div className="progress-line-fill"></div>
+        </div>
+        <div className={`progress-step-premium ${formStep >= 3 || isAnalyzing ? 'active' : ''}`}>
+          <div className="step-indicator-premium">
+            {isAnalyzing ? <span className="sim-spinner-premium"></span> : "3"}
+          </div>
+          <span className="step-label-premium">Sonuç</span>
         </div>
       </div>
-      
+
       {/* Adım 1: Adres Girişi */}
       {formStep === 1 && (
         <motion.div
@@ -384,87 +398,115 @@ function AddressForm() {
           initial="hidden"
           animate="visible"
           exit="exit"
+          className="step-content-premium"
         >
           {/* Adres giriş modu seçici */}
-          <div className="address-mode-toggle">
-            <button 
-              type="button" 
-              className={`mode-option ${addressMode === "manual" ? "active" : ""}`}
+          <div className="address-mode-segmented">
+            <button
+              type="button"
+              className={`segmented-tab ${addressMode === "manual" ? "active" : ""}`}
               onClick={() => setAddressMode("manual")}
             >
+              <LuFileText className="tab-icon" />
               <span>Adres Yaz</span>
             </button>
-            <button 
-              type="button" 
-              className={`mode-option ${addressMode === "map" ? "active" : ""}`}
+            <button
+              type="button"
+              className={`segmented-tab ${addressMode === "map" ? "active" : ""}`}
               onClick={() => setAddressMode("map")}
             >
+              <LuMapPin className="tab-icon" />
               <span>Haritadan Seç</span>
             </button>
+            <div className={`segmented-slider ${addressMode === "map" ? "slide-right" : ""}`} />
           </div>
-          
-          <form onSubmit={switchToStep2}>
-            <div className="form-note">
-              Adres girerseniz sistem koordinatları otomatik bulmaya çalışır. En doğru sonuç için haritadan konum seçebilirsiniz.
+
+          <form onSubmit={switchToStep2} className="premium-form-flow">
+            <div className="form-note-premium">
+              <div className="note-icon-wrapper">
+                <LuShieldAlert />
+              </div>
+              <p>
+                Adres girerseniz sistem koordinatları otomatik bulmaya çalışır. En doğru sonuç için <strong>Haritadan Seç</strong> modunu kullanarak binanızı işaretlemenizi öneririz.
+              </p>
             </div>
 
             {/* Manuel adres girişi */}
             {addressMode === "manual" && (
-              <div className="form-group">
-                <label htmlFor="address" className="form-label">Adres Bilgisi</label>
-                <motion.input
-                  id="address"
-                  className="form-input"
-                  type="text"
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                  placeholder="Tam adresinizi giriniz"
-                  maxLength={500}
-                  variants={inputVariants}
-                  whileFocus="focus"
-                  initial="blur"
-                />
-                <p className="form-hint">
-                  Adres doğruluğu düşük olabilir, haritadan konum doğrulamanız önerilir.
+              <div className="form-group-premium">
+                <label htmlFor="address" className="form-label-premium">Adres Bilgisi</label>
+                <div className="form-input-wrapper-premium">
+                  <LuMapPin className="input-icon-premium" />
+                  <motion.input
+                    id="address"
+                    className="form-input-premium"
+                    type="text"
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                    placeholder="Örn: Barbaros Mah. Dereboyu Cad. No:1 Ataşehir/İstanbul"
+                    maxLength={500}
+                    variants={inputVariants}
+                    whileFocus="focus"
+                    initial="blur"
+                  />
+                </div>
+                <p className="form-hint-premium">
+                  💡 Adresinizin tam ve doğru girilmesi koordinat tespitini kolaylaştırır.
                 </p>
               </div>
             )}
-            
+
             {/* Harita seçim modu */}
             {addressMode === "map" && (
-              <>
-                <div className="map-container">
-                  <Map 
-                    selectedPosition={mapCoordinates} 
-                    setSelectedPosition={setMapCoordinates} 
+              <div className="map-step-wrapper">
+                <div className="map-container-premium">
+                  <Map
+                    selectedPosition={mapCoordinates}
+                    setSelectedPosition={setMapCoordinates}
                   />
                 </div>
-                
-                {mapCoordinates && (
-                  <div className="selected-location">
-                    <strong>Seçilen Konum:</strong> {mapCoordinates.lat.toFixed(6)}, {mapCoordinates.lng.toFixed(6)}
+
+                {mapCoordinates ? (
+                  <div className="selected-location-premium active">
+                    <span className="pulse-dot-green"></span>
+                    <span><strong>Seçilen Koordinat:</strong> {mapCoordinates.lat.toFixed(6)}, {mapCoordinates.lng.toFixed(6)}</span>
+                  </div>
+                ) : (
+                  <div className="selected-location-premium pending">
+                    <span className="pulse-dot-orange"></span>
+                    <span>Lütfen harita üzerinde binanızın bulunduğu konuma tıklayarak işaretleyin.</span>
                   </div>
                 )}
-              </>
+              </div>
             )}
 
-            <motion.button 
-              className={`submit-button ${isLoading ? 'loading' : ''}`}
+            {generalError && (
+              <div className="form-alert-premium error">
+                <LuShieldAlert />
+                <span>{generalError}</span>
+              </div>
+            )}
+
+            <motion.button
+              className={`submit-button-premium ${isLoading ? 'loading' : ''}`}
               type="submit"
-              whileHover={{ scale: 1.03 }}
+              whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               disabled={isLoading}
             >
               {isLoading ? (
                 <span className="loading-spinner"></span>
               ) : (
-                "Devam Et"
+                <>
+                  <span>Devam Et</span>
+                  <LuArrowRight className="btn-icon-right" />
+                </>
               )}
             </motion.button>
           </form>
         </motion.div>
       )}
-      
+
       {/* Adım 2: Bina Bilgileri */}
       {formStep === 2 && !isAnalyzing && (
         <motion.div
@@ -473,115 +515,138 @@ function AddressForm() {
           initial="hidden"
           animate="visible"
           exit="exit"
+          className="step-content-premium"
         >
           {mapCoordinates && (
-            <div className="coord-info">
-              <div className="selected-location">
-                <strong>Kullanılan Konum:</strong> {mapCoordinates.lat.toFixed(6)}, {mapCoordinates.lng.toFixed(6)}
+            <div className="coord-info-premium">
+              <div className="selected-location-premium active">
+                <span className="pulse-dot-green"></span>
+                <span><strong>Kullanılacak Konum:</strong> {mapCoordinates.lat.toFixed(6)}, {mapCoordinates.lng.toFixed(6)}</span>
               </div>
               {address.trim() && (
-                <div className="form-hint">
-                  Hem adres hem pin bulunduğu için değerlendirmede harita koordinatı kullanılacaktır.
-                </div>
+                <p className="form-hint-premium">
+                  ℹ️ Hem adres hem pin girildiği için değerlendirmede doğrudan harita koordinatları temel alınacaktır.
+                </p>
               )}
             </div>
           )}
 
           {apiFeedback && (
-            <div className={`form-alert ${apiFeedback.type === "success" ? "success" : "error"}`}>
-              {apiFeedback.message}
+            <div className={`form-alert-premium ${apiFeedback.type === "success" ? "success" : "error"}`}>
+              <LuBadgeCheck />
+              <span>{apiFeedback.message}</span>
             </div>
           )}
           {generalError && (
-            <div className="form-alert error">
-              {generalError}
+            <div className="form-alert-premium error">
+              <LuShieldAlert />
+              <span>{generalError}</span>
             </div>
           )}
           {fieldErrors.location && (
-            <div className="form-alert error">
-              {fieldErrors.location}
+            <div className="form-alert-premium error">
+              <LuShieldAlert />
+              <span>{fieldErrors.location}</span>
             </div>
           )}
 
-          <form onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label htmlFor="yearBuilt" className="form-label">Yapım Yılı</label>
-              <motion.input
-                id="yearBuilt"
-                className="form-input"
-                type="text"
-                value={yearBuilt}
-                onChange={handleYearBuiltChange}
-                onKeyDown={allowOnlyDigitKeys}
-                onPaste={(e) => handleNumericPaste(e, "yearBuilt")}
-                placeholder="Binanın yapım yılını giriniz"
-                inputMode="numeric"
-                maxLength={4}
-                required
-                variants={inputVariants}
-                whileFocus="focus"
-                initial="blur"
-              />
-              {fieldErrors.yearBuilt && <div className="form-error">{fieldErrors.yearBuilt}</div>}
+          <form onSubmit={handleSubmit} className="premium-form-flow">
+            <div className="form-group-premium">
+              <label htmlFor="yearBuilt" className="form-label-premium">Yapım Yılı</label>
+              <div className="form-input-wrapper-premium">
+                <LuCalendar className="input-icon-premium" />
+                <motion.input
+                  id="yearBuilt"
+                  className="form-input-premium"
+                  type="text"
+                  value={yearBuilt}
+                  onChange={handleYearBuiltChange}
+                  onKeyDown={allowOnlyDigitKeys}
+                  onPaste={(e) => handleNumericPaste(e, "yearBuilt")}
+                  placeholder="Örn: 1998, 2012, 2020"
+                  inputMode="numeric"
+                  maxLength={4}
+                  required
+                  variants={inputVariants}
+                  whileFocus="focus"
+                  initial="blur"
+                />
+              </div>
+              {fieldErrors.yearBuilt ? (
+                <div className="form-error-premium">{fieldErrors.yearBuilt}</div>
+              ) : (
+                <p className="form-hint-premium">Binanın ruhsat yılı veya tamamlandığı yıl (Diri fay hattı ivme analizinde kullanılır).</p>
+              )}
             </div>
 
-            <div className="form-group">
-              <label htmlFor="floorCount" className="form-label">Kat Sayısı</label>
-              <motion.input
-                id="floorCount"
-                className="form-input"
-                type="text"
-                value={floorCount}
-                onChange={handleFloorCountChange}
-                onKeyDown={allowOnlyDigitKeys}
-                onPaste={(e) => handleNumericPaste(e, "floorCount")}
-                placeholder="Binanın toplam kat sayısını giriniz"
-                inputMode="numeric"
-                maxLength={3}
-                required
-                variants={inputVariants}
-                whileFocus="focus"
-                initial="blur"
-              />
-              {fieldErrors.floorCount && <div className="form-error">{fieldErrors.floorCount}</div>}
+            <div className="form-group-premium">
+              <label htmlFor="floorCount" className="form-label-premium">Kat Sayısı</label>
+              <div className="form-input-wrapper-premium">
+                <LuBuilding2 className="input-icon-premium" />
+                <motion.input
+                  id="floorCount"
+                  className="form-input-premium"
+                  type="text"
+                  value={floorCount}
+                  onChange={handleFloorCountChange}
+                  onKeyDown={allowOnlyDigitKeys}
+                  onPaste={(e) => handleNumericPaste(e, "floorCount")}
+                  placeholder="Örn: 5, 8, 12"
+                  inputMode="numeric"
+                  maxLength={3}
+                  required
+                  variants={inputVariants}
+                  whileFocus="focus"
+                  initial="blur"
+                />
+              </div>
+              {fieldErrors.floorCount ? (
+                <div className="form-error-premium">{fieldErrors.floorCount}</div>
+              ) : (
+                <p className="form-hint-premium">Zemin kat ve varsa bodrum katlar dahil toplam kat adedi.</p>
+              )}
             </div>
-            {fieldErrors.latitude && <div className="form-error">{fieldErrors.latitude}</div>}
-            {fieldErrors.longitude && <div className="form-error">{fieldErrors.longitude}</div>}
+            {fieldErrors.latitude && <div className="form-error-premium">{fieldErrors.latitude}</div>}
+            {fieldErrors.longitude && <div className="form-error-premium">{fieldErrors.longitude}</div>}
 
-            <div className="form-actions">
-              <motion.button 
-                className="back-button"
+            <div className="form-actions-premium">
+              <motion.button
+                className="back-button-premium"
                 type="button"
                 onClick={() => {
                   setGeneralError("");
                   setApiFeedback(null);
                   setFormStep(1);
                 }}
-                whileHover={{ scale: 1.03 }}
+                whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 disabled={isLoading}
               >
-                Geri
+                <LuArrowLeft className="btn-icon-left" />
+                <span>Geri Dön</span>
               </motion.button>
-              
-              <motion.button 
-                className={`submit-button ${isLoading ? 'loading' : ''}`}
+
+              <motion.button
+                className={`submit-button-premium ${isLoading ? 'loading' : ''}`}
                 type="submit"
-                whileHover={{ scale: 1.03 }}
+                whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 disabled={isLoading}
               >
                 {isLoading ? (
                   <span className="loading-spinner"></span>
                 ) : (
-                  "Risk Analizi Yap"
+                  <>
+                    <span>Risk Analizi Yap</span>
+                    <LuActivity className="btn-icon-right animate-pulse" />
+                  </>
                 )}
               </motion.button>
             </div>
           </form>
         </motion.div>
       )}
-      
+
       {/* Adım 2.5: Simülasyon Ekranı (Yeni) */}
       {isAnalyzing && (
         <motion.div
@@ -668,235 +733,235 @@ function AddressForm() {
           </div>
         </motion.div>
       )}
-      
+
       {/* Adım 3: Sonuç */}
       {formStep === 3 && evaluationResult && (
         <>
           <motion.div
             key="step3"
             className="result-container"
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ type: "spring", stiffness: 180, damping: 20 }}
-        >
-          <div className="result-hero">
-            <div className="result-hero-icon" style={{ color: getGradeColor(evaluationResult.safetyGrade) }}>
-              <LuBadgeCheck />
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ type: "spring", stiffness: 180, damping: 20 }}
+          >
+            <div className="result-hero">
+              <div className="result-hero-icon" style={{ color: getGradeColor(evaluationResult.safetyGrade) }}>
+                <LuBadgeCheck />
+              </div>
+              <div className="result-hero-content">
+                <h3 className="result-title">Deprem Risk Analizi Sonucu</h3>
+                <p className="result-hero-subtitle">
+                  Binanız için oluşturulan güvenlik derecesi aşağıda detaylarıyla sunulmuştur.
+                </p>
+              </div>
             </div>
-            <div className="result-hero-content">
-              <h3 className="result-title">Deprem Risk Analizi Sonucu</h3>
-              <p className="result-hero-subtitle">
-                Binanız için oluşturulan güvenlik derecesi aşağıda detaylarıyla sunulmuştur.
-              </p>
-            </div>
-          </div>
 
-          {/* Güvenlik Derecesi Göstergesi */}
-          <div className="safety-grade-badge-wrapper" style={{ position: 'relative', minHeight: '180px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-            {/* Neon Glow Aura */}
-            <div className={`glow-halo glow-${evaluationResult.safetyGrade}`} />
-            
-            <motion.div 
-              className="safety-grade-badge animate-pulse" 
-              style={{ 
-                backgroundColor: getGradeColor(evaluationResult.safetyGrade),
-                zIndex: 2,
-                position: 'relative'
-              }}
-              initial={{ scale: 0, rotate: -25 }}
-              animate={{ scale: 1, rotate: 0 }}
-              transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.2 }}
-              whileHover={{ scale: 1.1, transition: { duration: 0.2 } }}
-            >
-              {evaluationResult.safetyGrade}
-            </motion.div>
-            <motion.div 
-              className="safety-grade-label"
-              style={{ zIndex: 2, position: 'relative' }}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-            >
-              {getGradeText(evaluationResult.safetyGrade)}
-            </motion.div>
-          </div>
-          
-          {/* Risk Metresi */}
-          <div className="safety-meter-container">
-            <div className="meter-title-row">
-              <span className="meter-title">
-                <LuCircleGauge />
-                Güvenlik Ölçümü
-              </span>
-              <span className="safety-percentage">{displayPercentage}%</span>
-            </div>
-            <div className="safety-meter">
-              <div className="safety-meter-scale">
-                <div className="safety-level" style={{backgroundColor: '#10B981'}}>A</div>
-                <div className="safety-level" style={{backgroundColor: '#22D3EE'}}>B</div>
-                <div className="safety-level" style={{backgroundColor: '#FCD34D'}}>C</div>
-                <div className="safety-level" style={{backgroundColor: '#F97316'}}>D</div>
-                <div className="safety-level" style={{backgroundColor: '#F87171'}}>E</div>
-                <div className="safety-level" style={{backgroundColor: '#EF4444'}}>F</div>
-              </div>
-              
-              {/* Gösterge İşareti - Üçgen (Kayan Animasyon) */}
-              <motion.div 
-                className="safety-meter-indicator"
-                initial={{ left: "0%" }}
-                animate={{ left: `${getIndicatorPosition(evaluationResult.safetyGrade)}%` }}
-                transition={{ duration: 1.8, ease: [0.25, 1, 0.5, 1], delay: 0.5 }}
+            {/* Güvenlik Derecesi Göstergesi */}
+            <div className="safety-grade-badge-wrapper" style={{ position: 'relative', minHeight: '180px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+              {/* Neon Glow Aura */}
+              <div className={`glow-halo glow-${evaluationResult.safetyGrade}`} />
+
+              <motion.div
+                className="safety-grade-badge animate-pulse"
                 style={{
-                  borderBottomColor: getGradeColor(evaluationResult.safetyGrade)
+                  backgroundColor: getGradeColor(evaluationResult.safetyGrade),
+                  zIndex: 2,
+                  position: 'relative'
                 }}
-              ></motion.div>
+                initial={{ scale: 0, rotate: -25 }}
+                animate={{ scale: 1, rotate: 0 }}
+                transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.2 }}
+                whileHover={{ scale: 1.1, transition: { duration: 0.2 } }}
+              >
+                {evaluationResult.safetyGrade}
+              </motion.div>
+              <motion.div
+                className="safety-grade-label"
+                style={{ zIndex: 2, position: 'relative' }}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+              >
+                {getGradeText(evaluationResult.safetyGrade)}
+              </motion.div>
             </div>
-          </div>
-          
-          {/* Bina Bilgileri Özet Kartları ve Detayları - Staggered Slide-In */}
-          <motion.div 
-            className="result-summary"
-            variants={{
-              hidden: { opacity: 0 },
-              visible: {
-                opacity: 1,
-                transition: { staggerChildren: 0.12, delayChildren: 0.4 }
-              }
-            }}
-            initial="hidden"
-            animate="visible"
-          >
-            <motion.div 
-              className="summary-card"
-              variants={{
-                hidden: { opacity: 0, y: 20 },
-                visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 120 } }
-              }}
-            >
-              <div className="summary-icon">
-                <LuShieldAlert />
-              </div>
-              <div className="summary-detail">
-                <span className="summary-label">RİSK DERECESİ</span>
-                <span className="summary-value" style={{color: getGradeColor(evaluationResult.safetyGrade)}}>
-                  {getGradeText(evaluationResult.safetyGrade)}
+
+            {/* Risk Metresi */}
+            <div className="safety-meter-container">
+              <div className="meter-title-row">
+                <span className="meter-title">
+                  <LuCircleGauge />
+                  Güvenlik Ölçümü
                 </span>
+                <span className="safety-percentage">{displayPercentage}%</span>
               </div>
-            </motion.div>
-            
-            <motion.div 
-              className="summary-card"
+              <div className="safety-meter">
+                <div className="safety-meter-scale">
+                  <div className="safety-level" style={{ backgroundColor: '#10B981' }}>A</div>
+                  <div className="safety-level" style={{ backgroundColor: '#22D3EE' }}>B</div>
+                  <div className="safety-level" style={{ backgroundColor: '#FCD34D' }}>C</div>
+                  <div className="safety-level" style={{ backgroundColor: '#F97316' }}>D</div>
+                  <div className="safety-level" style={{ backgroundColor: '#F87171' }}>E</div>
+                  <div className="safety-level" style={{ backgroundColor: '#EF4444' }}>F</div>
+                </div>
+
+                {/* Gösterge İşareti - Üçgen (Kayan Animasyon) */}
+                <motion.div
+                  className="safety-meter-indicator"
+                  initial={{ left: "0%" }}
+                  animate={{ left: `${getIndicatorPosition(evaluationResult.safetyGrade)}%` }}
+                  transition={{ duration: 1.8, ease: [0.25, 1, 0.5, 1], delay: 0.5 }}
+                  style={{
+                    borderBottomColor: getGradeColor(evaluationResult.safetyGrade)
+                  }}
+                ></motion.div>
+              </div>
+            </div>
+
+            {/* Bina Bilgileri Özet Kartları ve Detayları - Staggered Slide-In */}
+            <motion.div
+              className="result-summary"
               variants={{
-                hidden: { opacity: 0, y: 20 },
-                visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 120 } }
+                hidden: { opacity: 0 },
+                visible: {
+                  opacity: 1,
+                  transition: { staggerChildren: 0.12, delayChildren: 0.4 }
+                }
               }}
+              initial="hidden"
+              animate="visible"
             >
-              <div className="summary-icon">
-                <LuHouse />
-              </div>
-              <div className="summary-detail">
-                <span className="summary-label">YAPIM YILI</span>
-                <span className="summary-value">{yearBuilt}</span>
-              </div>
+              <motion.div
+                className="summary-card"
+                variants={{
+                  hidden: { opacity: 0, y: 20 },
+                  visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 120 } }
+                }}
+              >
+                <div className="summary-icon">
+                  <LuShieldAlert />
+                </div>
+                <div className="summary-detail">
+                  <span className="summary-label">RİSK DERECESİ</span>
+                  <span className="summary-value" style={{ color: getGradeColor(evaluationResult.safetyGrade) }}>
+                    {getGradeText(evaluationResult.safetyGrade)}
+                  </span>
+                </div>
+              </motion.div>
+
+              <motion.div
+                className="summary-card"
+                variants={{
+                  hidden: { opacity: 0, y: 20 },
+                  visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 120 } }
+                }}
+              >
+                <div className="summary-icon">
+                  <LuHouse />
+                </div>
+                <div className="summary-detail">
+                  <span className="summary-label">YAPIM YILI</span>
+                  <span className="summary-value">{yearBuilt}</span>
+                </div>
+              </motion.div>
+
+              <motion.div
+                className="summary-card"
+                variants={{
+                  hidden: { opacity: 0, y: 20 },
+                  visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 120 } }
+                }}
+              >
+                <div className="summary-icon">
+                  <LuBuilding2 />
+                </div>
+                <div className="summary-detail">
+                  <span className="summary-label">KAT SAYISI</span>
+                  <span className="summary-value">{floorCount} Kat</span>
+                </div>
+              </motion.div>
             </motion.div>
-            
-            <motion.div 
-              className="summary-card"
-              variants={{
-                hidden: { opacity: 0, y: 20 },
-                visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 120 } }
-              }}
+
+            {/* Değerlendirme ve Öneriler */}
+            <motion.div
+              className="recommendation-container"
+              style={{ borderLeftColor: getGradeColor(evaluationResult.safetyGrade) }}
+              initial={{ opacity: 0, x: -15 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.8 }}
             >
-              <div className="summary-icon">
-                <LuBuilding2 />
-              </div>
-              <div className="summary-detail">
-                <span className="summary-label">KAT SAYISI</span>
-                <span className="summary-value">{floorCount} Kat</span>
-              </div>
+              <h4 className="recommendation-title">Değerlendirme ve Öneriler</h4>
+              <p className="recommendation-text">
+                {evaluationResult.evaluationNotes || getRecommendationText(evaluationResult.safetyGrade)}
+              </p>
             </motion.div>
-          </motion.div>
-          
-          {/* Değerlendirme ve Öneriler */}
-          <motion.div 
-            className="recommendation-container" 
-            style={{ borderLeftColor: getGradeColor(evaluationResult.safetyGrade) }}
-            initial={{ opacity: 0, x: -15 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.8 }}
-          >
-            <h4 className="recommendation-title">Değerlendirme ve Öneriler</h4>
-            <p className="recommendation-text">
-              {evaluationResult.evaluationNotes || getRecommendationText(evaluationResult.safetyGrade)}
-            </p>
-          </motion.div>
-          
-          {/* En Yakın Toplanma Alanı */}
-          {evaluationResult.nearestAssemblyArea && (
-            <motion.div 
-              className="assembly-area"
+
+            {/* En Yakın Toplanma Alanı */}
+            {evaluationResult.nearestAssemblyArea && (
+              <motion.div
+                className="assembly-area"
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.9 }}
+              >
+                <div className="area-icon">
+                  <LuMapPinHouse />
+                </div>
+                <div className="area-details">
+                  <h4>En Yakın Toplanma Alanı</h4>
+                  <p>{evaluationResult.nearestAssemblyArea}</p>
+                </div>
+              </motion.div>
+            )}
+
+            {/* Butonlar */}
+            <motion.div
+              className="result-actions"
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.9 }}
+              transition={{ duration: 0.5, delay: 1.0 }}
             >
-              <div className="area-icon">
-                <LuMapPinHouse />
-              </div>
-              <div className="area-details">
-                <h4>En Yakın Toplanma Alanı</h4>
-                <p>{evaluationResult.nearestAssemblyArea}</p>
-              </div>
-            </motion.div>
-          )}
-          
-          {/* Butonlar */}
-          <motion.div 
-            className="result-actions"
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 1.0 }}
-          >
-            <motion.button 
-              className="secondary-button"
-              type="button"
-              onClick={() => window.print()}
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <LuPrinter />
-              Raporu Yazdır
-            </motion.button>
-            
-            <motion.button 
-              className="submit-button"
-              type="button"
-              onClick={() => {
-                setFormStep(1);
-                setGeneralError("");
-                setApiFeedback(null);
-                setFieldErrors({});
-              }}
-              whileHover={{ scale: 1.03 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              Yeni Analiz Yap
-            </motion.button>
-          </motion.div>
-        </motion.div>
+              <motion.button
+                className="secondary-button"
+                type="button"
+                onClick={() => window.print()}
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <LuPrinter />
+                Raporu Yazdır
+              </motion.button>
 
-        {/* PDF Yazdırma Çıktısı İçin Görünmez Rapor Şablonu */}
-        <PrintReport 
-          evaluationResult={evaluationResult} 
-          yearBuilt={yearBuilt} 
-          floorCount={floorCount} 
-          mapCoordinates={mapCoordinates} 
-          address={address}
-          getGradeColor={getGradeColor}
-          getGradeText={getGradeText}
-          getRecommendationText={getRecommendationText}
-        />
-      </>
-    )}
+              <motion.button
+                className="submit-button"
+                type="button"
+                onClick={() => {
+                  setFormStep(1);
+                  setGeneralError("");
+                  setApiFeedback(null);
+                  setFieldErrors({});
+                }}
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                Yeni Analiz Yap
+              </motion.button>
+            </motion.div>
+          </motion.div>
+
+          {/* PDF Yazdırma Çıktısı İçin Görünmez Rapor Şablonu */}
+          <PrintReport
+            evaluationResult={evaluationResult}
+            yearBuilt={yearBuilt}
+            floorCount={floorCount}
+            mapCoordinates={mapCoordinates}
+            address={address}
+            getGradeColor={getGradeColor}
+            getGradeText={getGradeText}
+            getRecommendationText={getRecommendationText}
+          />
+        </>
+      )}
     </div>
   );
 }
@@ -911,7 +976,7 @@ function getIndicatorPosition(grade) {
     'E': 75,     // 9/6 * 50%
     'F': 91.66   // 11/6 * 50%
   };
-  
+
   return positions[grade] || 50;
 }
 
@@ -935,24 +1000,24 @@ function getSeismicPath(step) {
 // ============================================================================
 // Baskı Raporu Alt Bileşeni (Yalnızca Yazdırmada Görünür, A4 Sayfa Düzeni)
 // ============================================================================
-function PrintReport({ 
-  evaluationResult, 
-  yearBuilt, 
-  floorCount, 
-  mapCoordinates, 
+function PrintReport({
+  evaluationResult,
+  yearBuilt,
+  floorCount,
+  mapCoordinates,
   address,
   getGradeColor,
   getGradeText,
   getRecommendationText
 }) {
-  const currentDate = new Date().toLocaleDateString('tr-TR', { 
-    year: 'numeric', 
-    month: 'long', 
+  const currentDate = new Date().toLocaleDateString('tr-TR', {
+    year: 'numeric',
+    month: 'long',
     day: 'numeric',
     hour: '2-digit',
     minute: '2-digit'
   });
-  
+
   const reportId = React.useMemo(() => {
     const cleanAddress = (address || "").replace(/[^A-Z0-9]/gi, "").substring(0, 3).toUpperCase();
     const random = Math.floor(1000 + Math.random() * 9000);
@@ -969,10 +1034,10 @@ function PrintReport({
   const getBuildingPeriodCoords = (floors) => {
     const N = Math.max(1, Math.min(25, Number(floors) || 1));
     const T = N * 0.1; // Periyot tahmini: kat başına 0.1 sn
-    
+
     // T (0 - 3.0s) -> X (30 - 200)
     const x = 30 + (T / 3.0) * 170;
-    
+
     // T -> Y on the curve (25 top, 90 bottom)
     let y = 90;
     if (T < 0.15) {
@@ -1063,7 +1128,7 @@ function PrintReport({
           <div className="print-overview-card">
             <h3>Yönetici Özeti</h3>
             <p>
-              Bu rapor, beyan edilen konumdaki zemin spektral ivme verileri ile binanın yapım yılı ve kat sayısı parametrelerinin kombine edilmesiyle oluşturulmuştur. 
+              Bu rapor, beyan edilen konumdaki zemin spektral ivme verileri ile binanın yapım yılı ve kat sayısı parametrelerinin kombine edilmesiyle oluşturulmuştur.
               {grade === 'A' || grade === 'B' ? ' Binanızın güvenlik derecesi yüksek standartlardadır. Yapının modern deprem yönetmeliği esaslarına veya sağlam zemin koşullarına uygunluğu ön analizle desteklenmektedir.' : ''}
               {grade === 'C' || grade === 'D' ? ' Binanızın sismik güvenlik seviyesi orta düzeydedir. Sismik riskleri minimize etmek amacıyla taşıyıcı elemanların detaylı gözlemsel denetimi yapılması tavsiye edilir.' : ''}
               {grade === 'E' || grade === 'F' ? ' Binanızın sismik direnci düşük seviyede hesaplanmıştır. Yapının yaşı veya yüksek kat çarpanı nedeniyle olası bir depremde sismik ivmeleri absorbe etme kapasitesi zayıf olabilir. Acilen resmi mühendislik incelemesi yapılması önerilir.' : ''}
@@ -1102,7 +1167,7 @@ function PrintReport({
 
         <div className="print-body">
           <h2 className="print-section-title"><LuActivity /> Bilimsel Analizler ve Sismik Veriler</h2>
-          
+
           <div className="print-graphics-grid">
             {/* Grafik 1: Sismik İvme Spektrumu */}
             <div className="print-graphic-box">
@@ -1111,47 +1176,47 @@ function PrintReport({
                 {/* Axes */}
                 <line x1="20" y1="95" x2="210" y2="95" stroke="#94a3b8" strokeWidth="1" />
                 <line x1="20" y1="15" x2="20" y2="95" stroke="#94a3b8" strokeWidth="1" />
-                
+
                 {/* Y-Axis Grid & Labels */}
                 <line x1="15" y1="25" x2="210" y2="25" stroke="#f1f5f9" strokeWidth="0.8" strokeDasharray="2,2" />
                 <line x1="15" y1="60" x2="210" y2="60" stroke="#f1f5f9" strokeWidth="0.8" strokeDasharray="2,2" />
                 <text x="8" y="28" fontSize="6" fill="#94a3b8" textAnchor="end">1.2g (Maks)</text>
                 <text x="8" y="63" fontSize="6" fill="#94a3b8" textAnchor="end">0.6g</text>
                 <text x="8" y="98" fontSize="6" fill="#94a3b8" textAnchor="end">0.0g</text>
-                
+
                 {/* X-Axis Labels */}
                 <text x="30" y="104" fontSize="6" fill="#94a3b8" textAnchor="middle">0.1s</text>
                 <text x="85" y="104" fontSize="6" fill="#94a3b8" textAnchor="middle">1.0s</text>
                 <text x="145" y="104" fontSize="6" fill="#94a3b8" textAnchor="middle">2.0s</text>
                 <text x="205" y="104" fontSize="6" fill="#94a3b8" textAnchor="middle">3.0s</text>
-                
+
                 {/* Curve Path (Tasarım Spektrumu) */}
-                <path 
-                  d="M 20 90 C 24 50, 28 25, 35 25 L 65 25 C 100 25, 140 70, 210 90" 
-                  fill="none" 
-                  stroke="#1b61c9" 
-                  strokeWidth="2" 
+                <path
+                  d="M 20 90 C 24 50, 28 25, 35 25 L 65 25 C 100 25, 140 70, 210 90"
+                  fill="none"
+                  stroke="#1b61c9"
+                  strokeWidth="2"
                 />
-                
+
                 {/* Building Marker Dotted Lines */}
                 <line x1={markerX} y1={markerY} x2={markerX} y2="95" stroke="#ef4444" strokeWidth="0.8" strokeDasharray="2,2" />
                 <line x1="20" y1={markerY} x2={markerX} y2={markerY} stroke="#ef4444" strokeWidth="0.8" strokeDasharray="2,2" />
-                
+
                 {/* Building Period Marker */}
                 <circle cx={markerX} cy={markerY} r="4.5" fill="#ef4444" stroke="#ffffff" strokeWidth="1" />
                 <circle cx={markerX} cy={markerY} r="7" fill="none" stroke="#ef4444" strokeWidth="0.5" opacity="0.5" />
-                
+
                 {/* Marker Text */}
                 <text x={markerX > 120 ? markerX - 8 : markerX + 8} y={markerY > 40 ? markerY - 4 : markerY + 12} fontSize="7" fontWeight="bold" fill="#ef4444" textAnchor={markerX > 120 ? "end" : "start"}>
                   Yapı Periyodu (T ≈ {estimatedPeriod.toFixed(1)}s)
                 </text>
-                
+
                 {/* Axis Titles */}
                 <text x="115" y="112" fontSize="6" fontWeight="bold" fill="#64748b" textAnchor="middle">Doğal Titreşim Periyodu T (Saniye)</text>
                 <text x="-55" y="6" fontSize="6" fontWeight="bold" fill="#64748b" textAnchor="middle" transform="rotate(-90)">Sismik İvme Katsayısı S_ae (g)</text>
               </svg>
             </div>
-            
+
             {/* Grafik 2: Geoteknik ve Sismik Katsayılar Tablosu */}
             <div className="print-graphic-box" style={{ alignItems: 'stretch' }}>
               <h4 style={{ marginBottom: '1.5mm' }}>Geoteknik & Sismik Katsayılar (TBDY 2018)</h4>
@@ -1200,24 +1265,24 @@ function PrintReport({
             <div className="print-scientific-item">
               <h5><LuLayers /> Zemin Spektrumu ve İvme Büyütmesi</h5>
               <p>
-                Deprem dalgaları gevşek, suya doygun veya alüvyonal zeminlerden geçerken genlikleri büyür. 
-                Sert kayalar sismik enerjiyi hızla sönümlerken, zayıf zemin sınıfları (örneğin Z3 veya Z4) sarsıntı etkisini 2 ila 4 kat artırabilir. 
+                Deprem dalgaları gevşek, suya doygun veya alüvyonal zeminlerden geçerken genlikleri büyür.
+                Sert kayalar sismik enerjiyi hızla sönümlerken, zayıf zemin sınıfları (örneğin Z3 veya Z4) sarsıntı etkisini 2 ila 4 kat artırabilir.
                 Uygulamamız, AFAD verilerine dayalı konumunuzdaki sismik ivme parametrelerini sorgulayarak zemin büyütme riskini saptar.
               </p>
             </div>
             <div className="print-scientific-item">
               <h5><LuCpu /> Yapı Yaşı ve Yönetmelik Uyumu</h5>
               <p>
-                Türkiye'deki bina güvenliğinde en büyük kırılma noktası 1999 Marmara Depremi'dir. 
-                1999 öncesi inşa edilen yapılar eski deprem yönetmeliğine tabi olup, hazır beton kullanımı (C25 ve üzeri) ve sismik etriye sıklığı kontrolü zayıftır. 
+                Türkiye'deki bina güvenliğinde en büyük kırılma noktası 1999 Marmara Depremi'dir.
+                1999 öncesi inşa edilen yapılar eski deprem yönetmeliğine tabi olup, hazır beton kullanımı (C25 ve üzeri) ve sismik etriye sıklığı kontrolü zayıftır.
                 2000-2018 yılları arası yapılar daha sıkı denetlenmiş, 2018 yılı ve sonrası yapılar ise en güncel sismik mühendislik standartlarına göre inşa edilmiştir.
               </p>
             </div>
             <div className="print-scientific-item">
               <h5><LuActivity /> Bina Yüksekliği ve Rezonans Etkisi</h5>
               <p>
-                Her yapının kat sayısına ve rijitliğine bağlı doğal bir titreşim periyodu vardır (yaklaşık kat başına 0.1 sn). 
-                Eğer deprem dalgalarının baskın salınım periyodu ile binanın periyodu çakışırsa, yapı "rezonansa" girer ve sarsıntı şiddeti katlanarak yıkıcı boyutlara ulaşır. 
+                Her yapının kat sayısına ve rijitliğine bağlı doğal bir titreşim periyodu vardır (yaklaşık kat başına 0.1 sn).
+                Eğer deprem dalgalarının baskın salınım periyodu ile binanın periyodu çakışırsa, yapı "rezonansa" girer ve sarsıntı şiddeti katlanarak yıkıcı boyutlara ulaşır.
                 Sismik ivme spektrumu eğrisi üzerindeki kırmızı işaret, binanızın bu rezonans tehlikesine ne ölçüde yakın olduğunu bilimsel olarak gösterir.
               </p>
             </div>
@@ -1245,7 +1310,7 @@ function PrintReport({
 
         <div className="print-body">
           <h2 className="print-section-title"><LuFileText /> Mühendislik Önerileri ve Deprem Önlemleri</h2>
-          
+
           <div className="print-recommendation-box">
             <h4>Özel Mühendislik Değerlendirmesi</h4>
             <p>
@@ -1265,7 +1330,7 @@ function PrintReport({
                 <li><strong>Statik Rapor Oluşturulması:</strong> Elde edilen verilerle binanın 3D bilgisayar modelinin çizilip sismik simülasyonunun çalıştırılması.</li>
               </ul>
             </div>
-            
+
             <div className="print-step-column">
               <h4>Bireysel Deprem Eylem Planı (Sosyal)</h4>
               <ul className="print-step-list">
@@ -1285,7 +1350,7 @@ function PrintReport({
               <span><strong>İmza Yetkilisi:</strong> EarthquakeCheck Sismik Analiz Grubu</span>
               <span className="print-signature-text">E-İmza / Sistem Tarafından Dijital Olarak İmzalanmıştır</span>
             </div>
-            
+
             <div className="print-verification-stamp">
               <div className="print-qr-mock">
                 <svg viewBox="0 0 25 25" width="100%" height="100%" style={{ shapeRendering: 'crispEdges' }}>
@@ -1293,25 +1358,25 @@ function PrintReport({
                   <rect x="1" y="1" width="7" height="7" fill="black" />
                   <rect x="2" y="2" width="5" height="5" fill="white" />
                   <rect x="3" y="3" width="3" height="3" fill="black" />
-                  
+
                   <rect x="17" y="1" width="7" height="7" fill="black" />
                   <rect x="18" y="2" width="5" height="5" fill="white" />
                   <rect x="19" y="3" width="3" height="3" fill="black" />
-                  
+
                   <rect x="1" y="17" width="7" height="7" fill="black" />
                   <rect x="2" y="18" width="5" height="5" fill="white" />
                   <rect x="3" y="19" width="3" height="3" fill="black" />
-                  
+
                   <rect x="10" y="2" width="2" height="2" fill="black" />
                   <rect x="13" y="1" width="1" height="3" fill="black" />
                   <rect x="10" y="6" width="3" height="1" fill="black" />
                   <rect x="14" y="5" width="2" height="2" fill="black" />
-                  
+
                   <rect x="10" y="10" width="2" height="2" fill="black" />
                   <rect x="15" y="10" width="3" height="1" fill="black" />
                   <rect x="12" y="13" width="2" height="3" fill="black" />
                   <rect x="16" y="14" width="2" height="2" fill="black" />
-                  
+
                   <rect x="10" y="18" width="1" height="4" fill="black" />
                   <rect x="13" y="20" width="3" height="2" fill="black" />
                   <rect x="18" y="18" width="4" height="1" fill="black" />

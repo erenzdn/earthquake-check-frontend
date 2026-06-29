@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
-import { LuMenu, LuX } from 'react-icons/lu';
+import { LuMenu, LuX, LuArrowRight } from 'react-icons/lu';
 
 function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -9,7 +9,7 @@ function Navbar() {
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 50) {
+      if (window.scrollY > 30) {
         setScrolled(true);
       } else {
         setScrolled(false);
@@ -32,8 +32,21 @@ function Navbar() {
     setMenuOpen(!menuOpen);
   };
 
+  const handleCtaClick = (e) => {
+    if (location.pathname === '/') {
+      e.preventDefault();
+      const element = document.getElementById('risk-form');
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  };
+
+  const isHomepage = location.pathname === '/';
+  const showDarkTheme = isHomepage && !scrolled;
+
   return (
-    <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
+    <nav className={`navbar ${scrolled ? 'scrolled' : ''} ${showDarkTheme ? 'on-dark-hero' : ''}`}>
       <div className="nav-container">
         <Link to="/" className="app-title" aria-label="EarthquakeCheck ana sayfa">
           <img src="/logo.svg" alt="EarthquakeCheck logo" className="app-logo" />
@@ -42,12 +55,13 @@ function Navbar() {
           </span>
         </Link>
         
-        <button className="mobile-menu-btn" onClick={toggleMenu}>
-          {menuOpen ? (
-            <LuX />
-          ) : (
-            <LuMenu />
-          )}
+        <button 
+          className="mobile-menu-btn" 
+          onClick={toggleMenu} 
+          aria-label={menuOpen ? 'Menüyü Kapat' : 'Menüyü Aç'}
+          aria-expanded={menuOpen}
+        >
+          {menuOpen ? <LuX /> : <LuMenu />}
         </button>
         
         <div className={`nav-links ${menuOpen ? 'open' : ''}`}>
@@ -63,6 +77,10 @@ function Navbar() {
           <NavLink to="/iletisim" className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}>
             İletişim
           </NavLink>
+          <Link to="/#risk-form" onClick={handleCtaClick} className="nav-cta-btn">
+            <span>Sorgula</span>
+            <LuArrowRight className="cta-icon" />
+          </Link>
         </div>
       </div>
     </nav>

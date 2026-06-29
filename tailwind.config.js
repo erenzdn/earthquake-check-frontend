@@ -7,8 +7,8 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["Plus Jakarta Sans", "Inter", "Segoe UI", "Roboto", "sans-serif"],
-        heading: ["Outfit", "Plus Jakarta Sans", "sans-serif"],
+        sans: ["Satoshi", "Inter", "Segoe UI", "Roboto", "sans-serif"],
+        heading: ["Clash Display", "Satoshi", "sans-serif"],
       },
       colors: {
         ec: {

@@ -316,8 +316,11 @@ function Home() {
       <main className="home-main bg-slate-50 w-full max-w-none px-0 py-0">
         
         {/* 3. Bento Grid Özellikler Bölümü */}
-        <section className="py-24 bg-white border-b border-slate-100">
-          <div className="mx-auto max-w-ecHero px-5 md:px-8">
+        <section className="py-24 bg-slate-50 border-b border-slate-200/50 relative overflow-hidden">
+          {/* Arka Plan Hafif Işıma */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-500/5 rounded-full blur-[120px] pointer-events-none" />
+          
+          <div className="mx-auto max-w-ecHero px-5 md:px-8 relative z-10">
             <div className="text-center max-w-[800px] mx-auto mb-16">
               <p className="text-xs font-bold uppercase tracking-[0.2em] text-indigo-600 mb-3">BİLİMSEL VE GÜVENLİ TEKNOLOJİ</p>
               <h2 className="text-3xl md:text-4xl font-bold text-slate-900 tracking-tight">
@@ -334,11 +337,11 @@ function Home() {
               {/* Kutu 1: Geniş Kart - Zemin ve İvme */}
               <div className="bento-card bento-card-span-2 min-h-[340px]">
                 <div>
-                  <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-lg mb-6">
+                  <div className="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 flex items-center justify-center text-lg mb-6">
                     <LuMapPin />
                   </div>
-                  <h3 className="text-xl font-bold text-slate-900 mb-2">Gelişmiş Zemin & İvme Haritalama</h3>
-                  <p className="text-slate-500 text-sm leading-relaxed max-w-[55ch]">
+                  <h3 className="text-xl font-bold text-white mb-2">Gelişmiş Zemin & İvme Haritalama</h3>
+                  <p className="text-slate-300 text-sm leading-relaxed max-w-[55ch]">
                     Girdiğiniz koordinat verilerini kullanarak bölgenin diri fay hatlarına olan mesafesini, zemin sınıfını ve sismik ivme (PGA) katsayılarını coğrafi bilgi sistemleri (CBS) veritabanlarından çekerek işliyoruz.
                   </p>
                 </div>
@@ -360,23 +363,23 @@ function Home() {
               {/* Kutu 2: Dikey Kart - Yapısal Risk */}
               <div className="bento-card row-span-1 min-h-[340px]">
                 <div>
-                  <div className="w-10 h-10 rounded-xl bg-cyan-50 text-cyan-600 flex items-center justify-center text-lg mb-6">
+                  <div className="w-10 h-10 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 flex items-center justify-center text-lg mb-6">
                     <LuBuilding2 />
                   </div>
-                  <h3 className="text-xl font-bold text-slate-900 mb-2">Yapısal Dayanım Katsayısı</h3>
-                  <p className="text-slate-500 text-sm leading-relaxed">
+                  <h3 className="text-xl font-bold text-white mb-2">Yapısal Dayanım Katsayısı</h3>
+                  <p className="text-slate-300 text-sm leading-relaxed">
                     İnşa yılı ve toplam kat sayısı gibi temel yapısal parametreleri, Türkiye Bina Deprem Yönetmeliği standartları temelindeki algoritmalarla değerlendiriyoruz.
                   </p>
                 </div>
                 
-                <div className="mt-6 border-t border-slate-100 pt-4 space-y-2 text-xs font-mono text-slate-500">
+                <div className="mt-6 border-t border-slate-800/60 pt-4 space-y-2 text-xs font-mono text-slate-400">
                   <div className="flex justify-between">
                     <span>İnşa Yılı Kriteri:</span>
-                    <span className="text-slate-800 font-bold">1999 Öncesi / Sonrası</span>
+                    <span className="text-slate-200 font-bold">1999 Öncesi / Sonrası</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Kat Yüksekliği Sınırı:</span>
-                    <span className="text-slate-800 font-bold">Dinamik İvme Hesabı</span>
+                    <span className="text-slate-200 font-bold">Dinamik İvme Hesabı</span>
                   </div>
                 </div>
               </div>
@@ -384,11 +387,11 @@ function Home() {
               {/* Kutu 3: Kare Kart - KVKK Gizlilik */}
               <div className="bento-card min-h-[280px]">
                 <div>
-                  <div className="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center text-lg mb-6">
+                  <div className="w-10 h-10 rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/20 flex items-center justify-center text-lg mb-6">
                     <LuLock />
                   </div>
-                  <h3 className="text-xl font-bold text-slate-900 mb-2">Veri Kayıt Defteri Tutulmaz</h3>
-                  <p className="text-slate-500 text-sm leading-relaxed">
+                  <h3 className="text-xl font-bold text-white mb-2">Veri Kayıt Defteri Tutulmaz</h3>
+                  <p className="text-slate-300 text-sm leading-relaxed">
                     Kişisel verilerinizin gizliliğine saygı duyuyoruz. Girdiğiniz adres ve bina nitelikleri yalnızca anlık hesaplama oturumunda işlenir, veritabanımızda kalıcı olarak saklanmaz.
                   </p>
                 </div>
@@ -400,11 +403,11 @@ function Home() {
               {/* Kutu 4: Kare Kart - Sosyal Sorumluluk */}
               <div className="bento-card min-h-[280px]">
                 <div>
-                  <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-lg mb-6">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center text-lg mb-6">
                     <LuHeart />
                   </div>
-                  <h3 className="text-xl font-bold text-slate-900 mb-2">Sosyal Sorumluluk Girişimi</h3>
-                  <p className="text-slate-500 text-sm leading-relaxed">
+                  <h3 className="text-xl font-bold text-white mb-2">Sosyal Sorumluluk Girişimi</h3>
+                  <p className="text-slate-300 text-sm leading-relaxed">
                     Amacımız halk sağlığı ve deprem bilincini artırmaktır. EarthquakeCheck, herkesin yaşadığı yapının durumu hakkında fikir sahibi olması için geliştirilmiş tamamen ücretsiz bir projedir.
                   </p>
                 </div>
@@ -416,11 +419,11 @@ function Home() {
               {/* Kutu 5: Kare Kart - Hızlı Sonuç */}
               <div className="bento-card min-h-[280px]">
                 <div>
-                  <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-lg mb-6">
+                  <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center justify-center text-lg mb-6">
                     <LuTimer />
                   </div>
-                  <h3 className="text-xl font-bold text-slate-900 mb-2">3 Dakikada Rapor</h3>
-                  <p className="text-slate-500 text-sm leading-relaxed">
+                  <h3 className="text-xl font-bold text-white mb-2">3 Dakikada Rapor</h3>
+                  <p className="text-slate-300 text-sm leading-relaxed">
                     Uzun süren bürokratik prosedürlere veya pahalı dayanıklılık testlerine girmeden önce, binanızın durumuna dair en hızlı teknik risk projeksiyonunu elde edin.
                   </p>
                 </div>
@@ -434,14 +437,17 @@ function Home() {
         </section>
 
         {/* 4. Etkileşimli Süreç Sekmeleri (Interactive Steps) */}
-        <section className="py-24 bg-slate-50 border-b border-slate-100">
-          <div className="mx-auto max-w-ecHero px-5 md:px-8">
+        <section className="py-24 bg-[#0a0f1d] border-b border-slate-950/60 relative overflow-hidden">
+          {/* Arka Plan Sismik Glow Işıkları */}
+          <div className="ec-glow-ball ec-glow-ball-cyan opacity-15" style={{ top: '20%', right: '30%' }} />
+          
+          <div className="mx-auto max-w-ecHero px-5 md:px-8 relative z-10">
             <div className="text-center max-w-[800px] mx-auto mb-16">
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-indigo-600 mb-3">KULLANICI AKIŞI</p>
-              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 tracking-tight">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-cyan-400 mb-3">KULLANICI AKIŞI</p>
+              <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight">
                 Analiz Süreci Nasıl İşler?
               </h2>
-              <p className="mt-4 text-slate-500 text-base">
+              <p className="mt-4 text-slate-400 text-base">
                 Sekmelere tıklayarak analiz esnasındaki aşamaları ve sistemin arka planda ürettiği çıktıları önizleyin.
               </p>
             </div>
@@ -451,51 +457,51 @@ function Home() {
               <div className="lg:col-span-5 space-y-4">
                 <button 
                   onClick={() => setActiveStepTab(1)}
-                  className={`w-full text-left p-6 rounded-2xl border transition-all duration-300 ${
+                  className={`w-full text-left p-6 rounded-2xl border transition-all duration-300 backdrop-blur-md ${
                     activeStepTab === 1 
-                      ? 'bg-white border-indigo-500/40 shadow-md ring-1 ring-indigo-500/10' 
-                      : 'bg-white/60 border-slate-200/60 hover:bg-white hover:border-slate-300'
+                      ? 'bg-white/10 border-white/25 shadow-[0_0_30px_rgba(255,255,255,0.05)] text-white' 
+                      : 'bg-white/5 border-white/5 text-slate-300 hover:bg-white/8 hover:border-white/10'
                   }`}
                 >
-                  <h3 className="font-bold text-slate-900 text-base mb-1.5 flex items-center gap-2">
-                    <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${activeStepTab === 1 ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-500'}`}>1</span>
+                  <h3 className={`font-bold text-base mb-1.5 flex items-center gap-2 ${activeStepTab === 1 ? 'text-white' : 'text-slate-200'}`}>
+                    <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${activeStepTab === 1 ? 'bg-indigo-600 text-white shadow-[0_0_10px_rgba(79,70,229,0.4)]' : 'bg-white/10 text-slate-400 border border-white/10'}`}>1</span>
                     Konum ve Adres Belirleme
                   </h3>
-                  <p className="text-slate-500 text-xs leading-relaxed pl-8">
+                  <p className="text-slate-400 text-xs leading-relaxed pl-8">
                     Adresinizi yazın veya harita üzerinden yapınızın tam koordinatlarını işaretleyerek analiz zeminini hazırlayın.
                   </p>
                 </button>
 
                 <button 
                   onClick={() => setActiveStepTab(2)}
-                  className={`w-full text-left p-6 rounded-2xl border transition-all duration-300 ${
+                  className={`w-full text-left p-6 rounded-2xl border transition-all duration-300 backdrop-blur-md ${
                     activeStepTab === 2 
-                      ? 'bg-white border-indigo-500/40 shadow-md ring-1 ring-indigo-500/10' 
-                      : 'bg-white/60 border-slate-200/60 hover:bg-white hover:border-slate-300'
+                      ? 'bg-white/10 border-white/25 shadow-[0_0_30px_rgba(255,255,255,0.05)] text-white' 
+                      : 'bg-white/5 border-white/5 text-slate-300 hover:bg-white/8 hover:border-white/10'
                   }`}
                 >
-                  <h3 className="font-bold text-slate-900 text-base mb-1.5 flex items-center gap-2">
-                    <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${activeStepTab === 2 ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-500'}`}>2</span>
+                  <h3 className={`font-bold text-base mb-1.5 flex items-center gap-2 ${activeStepTab === 2 ? 'text-white' : 'text-slate-200'}`}>
+                    <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${activeStepTab === 2 ? 'bg-indigo-600 text-white shadow-[0_0_10px_rgba(79,70,229,0.4)]' : 'bg-white/10 text-slate-400 border border-white/10'}`}>2</span>
                     Yapı Nitelik Girişi
                   </h3>
-                  <p className="text-slate-500 text-xs leading-relaxed pl-8">
+                  <p className="text-slate-400 text-xs leading-relaxed pl-8">
                     Binanın yapım yılı ve toplam kat sayısını girerek, yönetmelik çarpanlarının sismik yüke etkisini tanımlayın.
                   </p>
                 </button>
 
                 <button 
                   onClick={() => setActiveStepTab(3)}
-                  className={`w-full text-left p-6 rounded-2xl border transition-all duration-300 ${
+                  className={`w-full text-left p-6 rounded-2xl border transition-all duration-300 backdrop-blur-md ${
                     activeStepTab === 3 
-                      ? 'bg-white border-indigo-500/40 shadow-md ring-1 ring-indigo-500/10' 
-                      : 'bg-white/60 border-slate-200/60 hover:bg-white hover:border-slate-300'
+                      ? 'bg-white/10 border-white/25 shadow-[0_0_30px_rgba(255,255,255,0.05)] text-white' 
+                      : 'bg-white/5 border-white/5 text-slate-300 hover:bg-white/8 hover:border-white/10'
                   }`}
                 >
-                  <h3 className="font-bold text-slate-900 text-base mb-1.5 flex items-center gap-2">
-                    <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${activeStepTab === 3 ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-500'}`}>3</span>
+                  <h3 className={`font-bold text-base mb-1.5 flex items-center gap-2 ${activeStepTab === 3 ? 'text-white' : 'text-slate-200'}`}>
+                    <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs ${activeStepTab === 3 ? 'bg-indigo-600 text-white shadow-[0_0_10px_rgba(79,70,229,0.4)]' : 'bg-white/10 text-slate-400 border border-white/10'}`}>3</span>
                     Derecelendirilmiş Risk Raporu
                   </h3>
-                  <p className="text-slate-500 text-xs leading-relaxed pl-8">
+                  <p className="text-slate-400 text-xs leading-relaxed pl-8">
                     Tüm verilerin işlenmesiyle saniyeler içinde A'dan F'ye harf notu içeren detaylı risk skor kartınızı elde edin.
                   </p>
                 </button>
@@ -503,8 +509,8 @@ function Home() {
 
               {/* Sağ Alan: Canlı Simülasyon Ekranı */}
               <div className="lg:col-span-7 flex justify-center">
-                <div className="w-full max-w-[500px] bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl text-left font-mono text-xs text-slate-400 h-[280px] flex flex-col justify-between">
-                  <div className="flex justify-between pb-3 border-b border-slate-800 text-[10px] text-slate-500">
+                <div className="w-full max-w-[500px] bg-slate-950/70 backdrop-blur-md border border-slate-800 rounded-2xl p-6 shadow-xl text-left font-mono text-xs text-slate-400 h-[280px] flex flex-col justify-between">
+                  <div className="flex justify-between pb-3 border-b border-slate-800/60 text-[10px] text-slate-500">
                     <span>SİSTEM AŞAMA ÖNİZLEME</span>
                     <span className="text-indigo-400 font-bold">AŞAMA: {activeStepTab} / 3</span>
                   </div>
@@ -515,7 +521,7 @@ function Home() {
                         <p className="text-white font-bold">📍 KONUM ALTYAPISI AKTİF</p>
                         <p className="text-slate-400 text-[11px]">Enlem: 40.9823° N | Boylam: 29.0234° E</p>
                         <p className="text-slate-400 text-[11px]">Zemin Parametresi (Vs30): 280 m/s (Z3 Sınıfı)</p>
-                        <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden mt-3">
+                        <div className="h-1.5 w-full bg-slate-800/60 rounded-full overflow-hidden mt-3">
                           <div className="h-full bg-cyan-400 w-1/3 rounded-full" />
                         </div>
                       </div>
@@ -526,7 +532,7 @@ function Home() {
                         <p className="text-white font-bold">🏢 YAPI MATRİS PARAMETRELERİ</p>
                         <p className="text-slate-400 text-[11px]">Bina İnşa Yılı: 1996 (Kritik Yönetmelik Öncesi)</p>
                         <p className="text-slate-400 text-[11px]">Kat Adedi: 6 Kat | Yapı Türü: Betonarme</p>
-                        <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden mt-3">
+                        <div className="h-1.5 w-full bg-slate-800/60 rounded-full overflow-hidden mt-3">
                           <div className="h-full bg-indigo-500 w-2/3 rounded-full" />
                         </div>
                       </div>
@@ -537,7 +543,7 @@ function Home() {
                         <p className="text-emerald-400 font-bold flex items-center gap-1.5">
                           <LuBadgeCheck className="text-sm" /> DEPREM RİSK SKOR KARTI ÜRETİLDİ
                         </p>
-                        <div className="flex items-center gap-4 bg-slate-950/50 p-2.5 rounded-lg border border-slate-800 mt-2">
+                        <div className="flex items-center gap-4 bg-slate-900/60 p-2.5 rounded-lg border border-slate-800/80 mt-2">
                           <span className="text-2xl font-black text-rose-500 bg-rose-500/10 px-3 py-1 rounded border border-rose-500/20">D</span>
                           <div>
                             <p className="text-slate-200 font-bold">Risk Sınıfı: Orta-Yüksek Risk</p>
@@ -549,7 +555,7 @@ function Home() {
                     )}
                   </div>
 
-                  <div className="text-[9px] text-slate-600 flex justify-between pt-2 border-t border-slate-800">
+                  <div className="text-[9px] text-slate-600 flex justify-between pt-2 border-t border-slate-800/60">
                     <span>OTURUM: AKTİF</span>
                     <span>HIZ: 12.4 ms</span>
                   </div>
@@ -561,8 +567,11 @@ function Home() {
         </section>
 
         {/* 5. Risk Formu Portalı (AddressForm) */}
-        <section className="py-24 bg-white" id="risk-form">
-          <div className="mx-auto max-w-[900px] px-5 md:px-8">
+        <section className="py-24 bg-slate-50 border-b border-slate-200/50 relative overflow-hidden" id="risk-form">
+          {/* Glow Işığı */}
+          <div className="ec-glow-ball ec-glow-ball-indigo opacity-5" style={{ bottom: '-250px', right: '-150px', top: 'auto', left: 'auto' }} />
+          
+          <div className="mx-auto max-w-[900px] px-5 md:px-8 relative z-10">
             <div className="text-center mb-12">
               <p className="text-xs font-bold uppercase tracking-[0.2em] text-indigo-600 mb-3">ADIM ADIM DEĞERLENDİRME</p>
               <h2 className="text-3xl md:text-4xl font-bold text-slate-900 tracking-tight">
@@ -574,7 +583,7 @@ function Home() {
             </div>
 
             <div className="risk-form-glow-shell p-1.5 md:p-3">
-              <div className="bg-white rounded-[24px] p-5 md:p-8">
+              <div className="bg-[#0b132a] border border-slate-800/80 rounded-[24px] p-5 md:p-8 shadow-[0_20px_50px_rgba(11,19,42,0.25)]">
                 <AddressForm />
               </div>
             </div>
@@ -582,11 +591,14 @@ function Home() {
         </section>
 
         {/* 6. SSS (FAQ Section) */}
-        <section className="py-24 bg-slate-50 border-t border-slate-100">
-          <div className="mx-auto max-w-[800px] px-5 md:px-8">
+        <section className="py-24 bg-[#0a0f1d] border-t border-slate-950/50 relative overflow-hidden">
+          {/* Glow Işığı */}
+          <div className="ec-glow-ball ec-glow-ball-cyan opacity-10" style={{ top: '-250px', left: '-150px' }} />
+          
+          <div className="mx-auto max-w-[800px] px-5 md:px-8 relative z-10">
             <div className="text-center mb-16">
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-indigo-600 mb-3">SORULARINIZI YANITLIYORUZ</p>
-              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 tracking-tight">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-cyan-400 mb-3">SORULARINIZI YANITLIYORUZ</p>
+              <h2 className="text-3xl md:text-4xl font-bold text-white tracking-tight">
                 Sıkça Sorulan Sorular
               </h2>
             </div>
@@ -595,10 +607,10 @@ function Home() {
               {faqData.map((faq, index) => (
                 <div 
                   key={index}
-                  className="bg-white border border-slate-200/60 rounded-xl overflow-hidden shadow-sm"
+                  className="bg-white/5 border border-white/10 rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.15)]"
                 >
                   <div 
-                    className="faq-header flex items-center justify-between p-5 font-bold text-slate-800 text-sm md:text-base"
+                    className="faq-header flex items-center justify-between p-5 font-bold text-slate-200 text-sm md:text-base hover:text-white hover:bg-white/5 transition-all cursor-pointer"
                     onClick={() => toggleFaq(index)}
                   >
                     <span>{faq.q}</span>
@@ -613,7 +625,7 @@ function Home() {
                         exit={{ height: 0, opacity: 0 }}
                         transition={{ duration: 0.3, ease: "easeInOut" }}
                       >
-                        <div className="px-5 pb-5 pt-1 border-t border-slate-100 text-sm text-slate-500 leading-relaxed">
+                        <div className="px-5 pb-5 pt-4 border-t border-white/10 text-sm text-slate-300 leading-relaxed">
                           {faq.a}
                         </div>
                       </motion.div>
