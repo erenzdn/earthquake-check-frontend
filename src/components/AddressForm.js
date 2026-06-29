@@ -739,10 +739,10 @@ function AddressForm() {
         <>
           <motion.div
             key="step3"
-            className="result-container"
-            initial={{ opacity: 0, scale: 0.95 }}
+            className={`result-container result-container-grade-${evaluationResult.safetyGrade}`}
+            initial={{ opacity: 0, scale: 0.96 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ type: "spring", stiffness: 180, damping: 20 }}
+            transition={{ type: "spring", stiffness: 150, damping: 20 }}
           >
             <div className="result-hero">
               <div className="result-hero-icon" style={{ color: getGradeColor(evaluationResult.safetyGrade) }}>
@@ -757,32 +757,32 @@ function AddressForm() {
             </div>
 
             {/* Güvenlik Derecesi Göstergesi */}
-            <div className="safety-grade-badge-wrapper" style={{ position: 'relative', minHeight: '180px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+            <div className="safety-grade-badge-wrapper">
               {/* Neon Glow Aura */}
               <div className={`glow-halo glow-${evaluationResult.safetyGrade}`} />
 
               <motion.div
-                className="safety-grade-badge animate-pulse"
+                className={`safety-grade-badge grade-${evaluationResult.safetyGrade}`}
                 style={{
-                  backgroundColor: getGradeColor(evaluationResult.safetyGrade),
-                  zIndex: 2,
-                  position: 'relative'
+                  borderColor: getGradeColor(evaluationResult.safetyGrade),
+                  color: getGradeColor(evaluationResult.safetyGrade),
+                  boxShadow: `0 0 25px ${getGradeColor(evaluationResult.safetyGrade)}40`
                 }}
                 initial={{ scale: 0, rotate: -25 }}
                 animate={{ scale: 1, rotate: 0 }}
-                transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.2 }}
-                whileHover={{ scale: 1.1, transition: { duration: 0.2 } }}
+                transition={{ type: "spring", stiffness: 180, damping: 15, delay: 0.2 }}
+                whileHover={{ scale: 1.08, transition: { duration: 0.2 } }}
               >
                 {evaluationResult.safetyGrade}
               </motion.div>
               <motion.div
                 className="safety-grade-label"
-                style={{ zIndex: 2, position: 'relative' }}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
               >
                 {getGradeText(evaluationResult.safetyGrade)}
+                <span className="safety-grade-sublabel">Yapısal Güvenlik Seviyesi</span>
               </motion.div>
             </div>
 
@@ -791,30 +791,41 @@ function AddressForm() {
               <div className="meter-title-row">
                 <span className="meter-title">
                   <LuCircleGauge />
-                  Güvenlik Ölçümü
+                  Yapı Güvenlik Endeksi
                 </span>
-                <span className="safety-percentage">{displayPercentage}%</span>
+                <span className="safety-percentage">Skor: %{displayPercentage}</span>
               </div>
-              <div className="safety-meter">
-                <div className="safety-meter-scale">
-                  <div className="safety-level" style={{ backgroundColor: '#10B981' }}>A</div>
-                  <div className="safety-level" style={{ backgroundColor: '#22D3EE' }}>B</div>
-                  <div className="safety-level" style={{ backgroundColor: '#FCD34D' }}>C</div>
-                  <div className="safety-level" style={{ backgroundColor: '#F97316' }}>D</div>
-                  <div className="safety-level" style={{ backgroundColor: '#F87171' }}>E</div>
-                  <div className="safety-level" style={{ backgroundColor: '#EF4444' }}>F</div>
-                </div>
+              <div className="safety-meter-wrapper">
+                <div className="safety-meter">
+                  <div className="safety-meter-scale">
+                    <div className="safety-level-bar level-A" />
+                    <div className="safety-level-bar level-B" />
+                    <div className="safety-level-bar level-C" />
+                    <div className="safety-level-bar level-D" />
+                    <div className="safety-level-bar level-E" />
+                    <div className="safety-level-bar level-F" />
+                  </div>
 
-                {/* Gösterge İşareti - Üçgen (Kayan Animasyon) */}
-                <motion.div
-                  className="safety-meter-indicator"
-                  initial={{ left: "0%" }}
-                  animate={{ left: `${getIndicatorPosition(evaluationResult.safetyGrade)}%` }}
-                  transition={{ duration: 1.8, ease: [0.25, 1, 0.5, 1], delay: 0.5 }}
-                  style={{
-                    borderBottomColor: getGradeColor(evaluationResult.safetyGrade)
-                  }}
-                ></motion.div>
+                  {/* Gösterge İşareti - Modern Dikey Sürgü */}
+                  <motion.div
+                    className="safety-meter-indicator"
+                    initial={{ left: "0%" }}
+                    animate={{ left: `${getIndicatorPosition(evaluationResult.safetyGrade)}%` }}
+                    transition={{ duration: 1.8, ease: [0.25, 1, 0.5, 1], delay: 0.5 }}
+                    style={{
+                      backgroundColor: getGradeColor(evaluationResult.safetyGrade),
+                      boxShadow: `0 0 12px ${getGradeColor(evaluationResult.safetyGrade)}`
+                    }}
+                  />
+                </div>
+                <div className="safety-meter-labels">
+                  <span className={evaluationResult.safetyGrade === 'A' ? 'active' : ''}>A</span>
+                  <span className={evaluationResult.safetyGrade === 'B' ? 'active' : ''}>B</span>
+                  <span className={evaluationResult.safetyGrade === 'C' ? 'active' : ''}>C</span>
+                  <span className={evaluationResult.safetyGrade === 'D' ? 'active' : ''}>D</span>
+                  <span className={evaluationResult.safetyGrade === 'E' ? 'active' : ''}>E</span>
+                  <span className={evaluationResult.safetyGrade === 'F' ? 'active' : ''}>F</span>
+                </div>
               </div>
             </div>
 
@@ -834,7 +845,7 @@ function AddressForm() {
               <motion.div
                 className="summary-card"
                 variants={{
-                  hidden: { opacity: 0, y: 20 },
+                  hidden: { opacity: 0, y: 15 },
                   visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 120 } }
                 }}
               >
@@ -852,7 +863,7 @@ function AddressForm() {
               <motion.div
                 className="summary-card"
                 variants={{
-                  hidden: { opacity: 0, y: 20 },
+                  hidden: { opacity: 0, y: 15 },
                   visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 120 } }
                 }}
               >
@@ -868,7 +879,7 @@ function AddressForm() {
               <motion.div
                 className="summary-card"
                 variants={{
-                  hidden: { opacity: 0, y: 20 },
+                  hidden: { opacity: 0, y: 15 },
                   visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 120 } }
                 }}
               >
@@ -884,13 +895,17 @@ function AddressForm() {
 
             {/* Değerlendirme ve Öneriler */}
             <motion.div
-              className="recommendation-container"
-              style={{ borderLeftColor: getGradeColor(evaluationResult.safetyGrade) }}
-              initial={{ opacity: 0, x: -15 }}
-              animate={{ opacity: 1, x: 0 }}
+              className={`recommendation-container recommendation-${evaluationResult.safetyGrade}`}
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.8 }}
             >
-              <h4 className="recommendation-title">Değerlendirme ve Öneriler</h4>
+              <div className="recommendation-header">
+                <span className="recommendation-icon" style={{ color: getGradeColor(evaluationResult.safetyGrade) }}>
+                  {['A', 'B'].includes(evaluationResult.safetyGrade) ? <LuBadgeCheck /> : <LuShieldAlert />}
+                </span>
+                <h4 className="recommendation-title">Uzman Değerlendirmesi ve Öneriler</h4>
+              </div>
               <p className="recommendation-text">
                 {evaluationResult.evaluationNotes || getRecommendationText(evaluationResult.safetyGrade)}
               </p>
@@ -925,7 +940,7 @@ function AddressForm() {
                 className="secondary-button"
                 type="button"
                 onClick={() => window.print()}
-                whileHover={{ scale: 1.03 }}
+                whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
                 <LuPrinter />
@@ -941,7 +956,7 @@ function AddressForm() {
                   setApiFeedback(null);
                   setFieldErrors({});
                 }}
-                whileHover={{ scale: 1.03 }}
+                whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
                 Yeni Analiz Yap
